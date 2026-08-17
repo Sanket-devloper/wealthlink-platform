@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: wealth-link-postgres
+    environment:
+      POSTGRES_DB: wealth_link
+      POSTGRES_USER: wealth_link
+      POSTGRES_PASSWORD: wealth_link
+    ports:
+      - "5432:5432"
+    volumes:
+      - wealth-link-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wealth_link -d wealth_link"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  wealth-link-pg-data:

@@ -1,0 +1,9 @@
+com\wealthlink\identity\entity\AppUserTest.class
+com\wealthlink\account\entity\AccountTest.class
+com\wealthlink\customer\CustomerRepositoryIT.class
+com\wealthlink\support\AbstractIntegrationTest.class
+com\wealthlink\customer\entity\CustomerTest.class
+com\wealthlink\account\AccountRepositoryIT.class
+com\wealthlink\reference\MarketRepositoryIT.class
+com\wealthlink\identity\IdentityRepositoryIT.class
+com\wealthlink\reference\CurrencyRepositoryIT.class
