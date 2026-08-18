@@ -6,7 +6,6 @@ import com.wealthlink.account.repository.AccountRepository;
 import com.wealthlink.dividend.entity.DividendAllocation;
 import com.wealthlink.dividend.entity.DividendAllocationStatus;
 import com.wealthlink.dividend.entity.DividendEvent;
-import com.wealthlink.dividend.entity.DividendEventStatus;
 import com.wealthlink.dividend.repository.DividendAllocationRepository;
 import com.wealthlink.dividend.repository.DividendEventRepository;
 import com.wealthlink.fund.entity.Fund;
@@ -20,11 +19,12 @@ import com.wealthlink.reference.entity.Country;
 import com.wealthlink.reference.entity.Currency;
 import com.wealthlink.reference.repository.CountryRepository;
 import com.wealthlink.reference.repository.CurrencyRepository;
-import com.wealthlink.support.AbstractIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,7 +33,9 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class DividendRepositoryIT extends AbstractIntegrationTest {
+@SpringBootTest
+@Transactional
+class DividendRepositoryIT {
 
     @Autowired private DividendEventRepository eventRepository;
     @Autowired private DividendAllocationRepository allocationRepository;
@@ -68,7 +70,7 @@ class DividendRepositoryIT extends AbstractIntegrationTest {
                 .build());
 
         Fund fund = fundRepository.saveAndFlush(Fund.builder()
-                .isin("NO00DIV" + (System.currentTimeMillis() % 100000))
+                .isin("NO00" + UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase())
                 .name("Dividend Test Fund")
                 .baseCurrency(nok)
                 .domicileCountry(norway)
@@ -76,7 +78,7 @@ class DividendRepositoryIT extends AbstractIntegrationTest {
 
         shareClass = fundShareClassRepository.saveAndFlush(FundShareClass.builder()
                 .fund(fund)
-                .classCode("DIV-A")
+                .classCode("DIV-" + UUID.randomUUID().toString().substring(0, 4))
                 .name("Class A")
                 .currency(nok)
                 .build());
