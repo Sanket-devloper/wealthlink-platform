@@ -18,7 +18,7 @@
     <description>Wealth Link Platform - Dev1 Foundation (Identity, Reference Data, Customer, Account) + Dev2 Funds &amp; Market Data (Funds, Providers, FX, Prices, Imports)</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>

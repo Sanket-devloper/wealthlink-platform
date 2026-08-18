@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public abstract class AbstractIntegrationTest {
 
     @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("wealth_link")
             .withUsername("wealth_link")
             .withPassword("wealth_link");

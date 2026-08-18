@@ -1,4 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Identity & Access
 CREATE TABLE app_user (
