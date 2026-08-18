@@ -15,6 +15,23 @@ architecture doc describes for when Dev 1 hasn't landed yet — Day 1 and
 Day 2 of the Dev 2 plan are effectively collapsed into one step here.
 
 ## Dev 2 modules included
+# Wealth Link Platform — Dev 1 (Foundation) + Dev 2 (Funds & Market Data)
+
+Java 17 / Spring Boot / PostgreSQL / Modular monolith.
+
+This repo now contains **Dev 1's scope** (merged, per the architecture
+document's team split, Section 15: Identity & Access, Country / Market
+Config, Customer Management, Accounts) plus **Dev 2's scope** built on top
+of it: **Funds, Share Classes, Providers, FX Rates, Fund Prices, and the
+Import pipeline** (Section 11 / DEV2-D1..D4 in the Jira doc).
+
+Because Dev 1's foundation module is already merged into this codebase,
+Dev 2's entities wire **real `@ManyToOne` foreign keys directly into
+`Currency`/`Country`** rather than the temporary UUID-stub pattern the
+architecture doc describes for when Dev 1 hasn't landed yet — Day 1 and
+Day 2 of the Dev 2 plan are effectively collapsed into one step here.
+
+## Dev 2 modules included
 
 | Module | Entities |
 |---|---|

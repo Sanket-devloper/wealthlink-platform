@@ -37,7 +37,7 @@ public class ImportItem {
     private ImportBatch importBatch;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "raw_payload", columnDefinition = "jsonb", nullable = false)
+    @Column(name = "raw_payload", columnDefinition = "json", nullable = false)
     private String rawPayload;
 
     @Enumerated(EnumType.STRING)

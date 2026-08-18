@@ -1,174 +1,395 @@
 -- =====================================================================
 -- Wealth Link Platform
 -- Dev 2 — Funds & Market Data module
--- Funds | Share Classes | Providers | FX Rates | Fund Prices | Imports
+-- PostgreSQL Version
 --
--- Depends on V1__dev1_foundation.sql for CURRENCY / COUNTRY. Real FKs are
--- used directly (no UUID stubs) because Dev 1's foundation module is
--- already merged into this codebase.
---
--- Everything Dev 3 (Portfolio/Trading/Ledger) needs from this module is
--- FUND_SHARE_CLASS and PROVIDER — see README.local.md handoff notes.
+-- Depends on V1__dev1_foundation.sql
+-- Required tables from Dev 1:
+--   currency
+--   country
 -- =====================================================================
+
+
+-- ---------------------------------------------------------------------
+-- UUID Support
+-- ---------------------------------------------------------------------
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 
 -- ---------------------------------------------------------------------
 -- Funds
 -- ---------------------------------------------------------------------
 
-create table fund (
-    id                  uuid primary key default gen_random_uuid(),
-    isin                varchar(12) not null unique,
-    name                text not null,
-    base_currency_id    uuid not null references currency (id) on delete restrict,
-    domicile_country_id uuid not null references country (id) on delete restrict,
-    status              text not null check (status in ('ACTIVE', 'SUSPENDED', 'CLOSED')),
-    inception_date      date,
-    created_at          timestamptz not null default now(),
-    updated_at          timestamptz not null default now()
+CREATE TABLE fund (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    isin                VARCHAR(12) NOT NULL UNIQUE,
+    name                VARCHAR(255) NOT NULL,
+
+    base_currency_id    UUID NOT NULL
+                        REFERENCES currency(id)
+                        ON DELETE RESTRICT,
+
+    domicile_country_id UUID NOT NULL
+                        REFERENCES country(id)
+                        ON DELETE RESTRICT,
+
+    status              VARCHAR(255) NOT NULL
+                        CHECK (
+                            status IN (
+                                'ACTIVE',
+                                'SUSPENDED',
+                                'CLOSED'
+                            )
+                        ),
+
+    inception_date      DATE,
+
+    created_at          TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create table fund_share_class (
-    id          uuid primary key default gen_random_uuid(),
-    fund_id     uuid not null references fund (id) on delete restrict,
-    class_code  varchar(30) not null,
-    name        text not null,
-    currency_id uuid not null references currency (id) on delete restrict,
-    status      text not null check (status in ('ACTIVE', 'CLOSED')),
-    constraint uq_fund_share_class_fund_code unique (fund_id, class_code)
+
+CREATE TABLE fund_share_class (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    fund_id     UUID NOT NULL
+                REFERENCES fund(id)
+                ON DELETE RESTRICT,
+
+    class_code  VARCHAR(30) NOT NULL,
+
+    name        VARCHAR(255) NOT NULL,
+
+    currency_id UUID NOT NULL
+                REFERENCES currency(id)
+                ON DELETE RESTRICT,
+
+    status      VARCHAR(255) NOT NULL
+                CHECK (
+                    status IN (
+                        'ACTIVE',
+                        'CLOSED'
+                    )
+                ),
+
+    CONSTRAINT uq_fund_share_class_fund_code
+        UNIQUE (fund_id, class_code)
 );
+
 
 -- ---------------------------------------------------------------------
 -- Providers
 -- ---------------------------------------------------------------------
 
-create table provider (
-    id     uuid primary key default gen_random_uuid(),
-    code   varchar(30) not null unique,
-    name   text not null,
-    status text not null check (status in ('ACTIVE', 'DISABLED'))
+CREATE TABLE provider (
+    id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code   VARCHAR(30) NOT NULL UNIQUE,
+    name   VARCHAR(255) NOT NULL,
+
+    status VARCHAR(255) NOT NULL
+           CHECK (
+               status IN (
+                   'ACTIVE',
+                   'DISABLED'
+               )
+           )
 );
 
-create table fund_provider_mapping (
-    id                  uuid primary key default gen_random_uuid(),
-    fund_share_class_id uuid not null references fund_share_class (id) on delete restrict,
-    provider_id         uuid not null references provider (id) on delete restrict,
-    external_fund_id    text not null,
-    constraint uq_fund_provider_mapping_provider_external_id unique (provider_id, external_fund_id)
+
+CREATE TABLE fund_provider_mapping (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    fund_share_class_id UUID NOT NULL
+                        REFERENCES fund_share_class(id)
+                        ON DELETE RESTRICT,
+
+    provider_id         UUID NOT NULL
+                        REFERENCES provider(id)
+                        ON DELETE RESTRICT,
+
+    external_fund_id    VARCHAR(255) NOT NULL,
+
+    CONSTRAINT uq_fund_provider_mapping_provider_external_id
+        UNIQUE (provider_id, external_fund_id)
 );
+
 
 -- ---------------------------------------------------------------------
 -- FX Rates
 -- ---------------------------------------------------------------------
 
-create table fx_rate_source (
-    id   uuid primary key default gen_random_uuid(),
-    code varchar(30) not null unique,
-    name text not null
+CREATE TABLE fx_rate_source (
+    id   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(30) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL
 );
 
-create table fx_rate (
-    id                 uuid primary key default gen_random_uuid(),
-    base_currency_id   uuid not null references currency (id) on delete restrict,
-    quote_currency_id  uuid not null references currency (id) on delete restrict,
-    rate_date          date not null,
-    rate_type          text not null check (rate_type in ('SPOT', 'CLOSE')),
-    source_id          uuid not null references fx_rate_source (id) on delete restrict,
-    rate               numeric(24, 8) not null check (rate > 0),
-    constraint uq_fx_rate_business_key
-        unique (base_currency_id, quote_currency_id, rate_date, rate_type, source_id)
+
+CREATE TABLE fx_rate (
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    base_currency_id  UUID NOT NULL
+                      REFERENCES currency(id)
+                      ON DELETE RESTRICT,
+
+    quote_currency_id UUID NOT NULL
+                      REFERENCES currency(id)
+                      ON DELETE RESTRICT,
+
+    rate_date         DATE NOT NULL,
+
+    rate_type         VARCHAR(255) NOT NULL
+                      CHECK (
+                          rate_type IN (
+                              'SPOT',
+                              'CLOSE'
+                          )
+                      ),
+
+    source_id         UUID NOT NULL
+                      REFERENCES fx_rate_source(id)
+                      ON DELETE RESTRICT,
+
+    rate              DECIMAL(24, 8) NOT NULL
+                      CHECK (rate > 0),
+
+    CONSTRAINT uq_fx_rate_business_key
+        UNIQUE (
+            base_currency_id,
+            quote_currency_id,
+            rate_date,
+            rate_type,
+            source_id
+        )
 );
+
 
 -- ---------------------------------------------------------------------
--- Imports (job -> batch -> item), created before fund_price because
+-- Imports
+-- Job -> Batch -> Item
+--
+-- import_batch must be created before fund_price because
 -- fund_price.import_batch_id references import_batch.
 -- ---------------------------------------------------------------------
 
-create table import_job (
-    id          uuid primary key default gen_random_uuid(),
-    name        text not null,
-    provider_id uuid not null references provider (id) on delete restrict,
-    job_type    text not null check (job_type in ('FUND_PRICE_IMPORT', 'FX_RATE_IMPORT')),
-    status      text not null check (status in ('ACTIVE', 'DISABLED')),
-    created_at  timestamptz not null default now()
+CREATE TABLE import_job (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    name        VARCHAR(255) NOT NULL,
+
+    provider_id UUID NOT NULL
+                REFERENCES provider(id)
+                ON DELETE RESTRICT,
+
+    job_type    VARCHAR(255) NOT NULL
+                CHECK (
+                    job_type IN (
+                        'FUND_PRICE_IMPORT',
+                        'FX_RATE_IMPORT'
+                    )
+                ),
+
+    status      VARCHAR(255) NOT NULL
+                CHECK (
+                    status IN (
+                        'ACTIVE',
+                        'DISABLED'
+                    )
+                ),
+
+    created_at  TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create table import_batch (
-    id              uuid primary key default gen_random_uuid(),
-    import_job_id   uuid not null references import_job (id) on delete restrict,
-    idempotency_key text not null unique,
-    status          text not null check (status in ('PENDING', 'RUNNING', 'COMPLETED', 'FAILED')),
-    started_at      timestamptz not null default now(),
-    completed_at    timestamptz,
-    total_items     integer not null default 0,
-    success_count   integer not null default 0,
-    failure_count   integer not null default 0,
-    version         integer not null default 0
+
+CREATE TABLE import_batch (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    import_job_id   UUID NOT NULL
+                    REFERENCES import_job(id)
+                    ON DELETE RESTRICT,
+
+    idempotency_key VARCHAR(255) NOT NULL UNIQUE,
+
+    status          VARCHAR(255) NOT NULL
+                    CHECK (
+                        status IN (
+                            'PENDING',
+                            'RUNNING',
+                            'COMPLETED',
+                            'FAILED'
+                        )
+                    ),
+
+    started_at      TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    completed_at    TIMESTAMP(6),
+
+    total_items     INTEGER NOT NULL DEFAULT 0,
+
+    success_count   INTEGER NOT NULL DEFAULT 0,
+
+    failure_count   INTEGER NOT NULL DEFAULT 0,
+
+    version         INTEGER NOT NULL DEFAULT 0
 );
 
+
 -- ---------------------------------------------------------------------
--- Fund prices
+-- Fund Prices
 -- ---------------------------------------------------------------------
 
-create table fund_price (
-    id                   uuid primary key default gen_random_uuid(),
-    fund_share_class_id  uuid not null references fund_share_class (id) on delete restrict,
-    price_date           date not null,
-    price_type           text not null check (price_type in ('NAV', 'BID', 'ASK')),
-    provider_id          uuid not null references provider (id) on delete restrict,
-    currency_id          uuid not null references currency (id) on delete restrict,
-    price                numeric(24, 8) not null check (price > 0),
-    import_batch_id      uuid references import_batch (id) on delete set null,
-    -- Critical business rule (DEV2-D1 acceptance criteria): uniqueness is
-    -- anchored to the internal fund_share_class_id, not any provider's
-    -- external identifier, per the architecture doc.
-    constraint uq_fund_price_business_key
-        unique (fund_share_class_id, price_date, price_type, provider_id)
+CREATE TABLE fund_price (
+    id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    fund_share_class_id UUID NOT NULL
+                        REFERENCES fund_share_class(id)
+                        ON DELETE RESTRICT,
+
+    price_date          DATE NOT NULL,
+
+    price_type          VARCHAR(255) NOT NULL
+                        CHECK (
+                            price_type IN (
+                                'NAV',
+                                'BID',
+                                'ASK'
+                            )
+                        ),
+
+    provider_id         UUID NOT NULL
+                        REFERENCES provider(id)
+                        ON DELETE RESTRICT,
+
+    currency_id         UUID NOT NULL
+                        REFERENCES currency(id)
+                        ON DELETE RESTRICT,
+
+    price               DECIMAL(24, 8) NOT NULL
+                        CHECK (price > 0),
+
+    import_batch_id     UUID
+                        REFERENCES import_batch(id)
+                        ON DELETE SET NULL,
+
+    -- Business rule:
+    -- Uniqueness is based on the internal fund_share_class_id,
+    -- not the provider's external identifier.
+
+    CONSTRAINT uq_fund_price_business_key
+        UNIQUE (
+            fund_share_class_id,
+            price_date,
+            price_type,
+            provider_id
+        )
 );
 
--- import_item comes after fund_price because it optionally points at the
--- fund_price row it produced.
-create table import_item (
-    id               uuid primary key default gen_random_uuid(),
-    import_batch_id  uuid not null references import_batch (id) on delete restrict,
-    raw_payload      jsonb not null,
-    status           text not null check (status in ('PENDING', 'SUCCESS', 'FAILED')),
-    error_details    text,
-    fund_price_id    uuid references fund_price (id) on delete set null,
-    processed_at     timestamptz
+
+-- ---------------------------------------------------------------------
+-- Import Items
+--
+-- Created after fund_price because it optionally references fund_price.
+-- ---------------------------------------------------------------------
+
+CREATE TABLE import_item (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    import_batch_id UUID NOT NULL
+                    REFERENCES import_batch(id)
+                    ON DELETE RESTRICT,
+
+    raw_payload     JSONB NOT NULL,
+
+    status          VARCHAR(255) NOT NULL
+                    CHECK (
+                        status IN (
+                            'PENDING',
+                            'SUCCESS',
+                            'FAILED'
+                        )
+                    ),
+
+    error_details   VARCHAR(255),
+
+    fund_price_id   UUID
+                    REFERENCES fund_price(id)
+                    ON DELETE SET NULL,
+
+    processed_at    TIMESTAMP(6)
 );
 
--- ---------------------------------------------------------------------
--- Indexes (per Section 31 of the architecture doc, Dev 2 subset)
--- ---------------------------------------------------------------------
-
-create index ix_fund_base_currency on fund (base_currency_id);
-create index ix_fund_domicile_country on fund (domicile_country_id);
-create index ix_fund_share_class_fund on fund_share_class (fund_id);
-create index ix_fund_share_class_currency on fund_share_class (currency_id);
-create index ix_fund_provider_mapping_share_class on fund_provider_mapping (fund_share_class_id);
-create index ix_fund_provider_mapping_provider on fund_provider_mapping (provider_id);
-
-create index ix_fx_rate_base_quote_date on fx_rate (base_currency_id, quote_currency_id, rate_date desc);
-
-create index ix_fund_price_share_class_date on fund_price (fund_share_class_id, price_date desc);
-create index ix_fund_price_import_batch on fund_price (import_batch_id);
-
-create index ix_import_batch_job on import_batch (import_job_id);
-create index ix_import_item_batch on import_item (import_batch_id);
-create index ix_import_item_fund_price on import_item (fund_price_id);
-
--- code/isin/class_code/idempotency_key already have unique indexes via
--- their UNIQUE constraints above.
 
 -- ---------------------------------------------------------------------
--- Seed reference data — per Day 4 handoff notes (DEV2-D4)
+-- Indexes
 -- ---------------------------------------------------------------------
 
-insert into provider (code, name, status) values
+CREATE INDEX ix_fund_base_currency
+    ON fund(base_currency_id);
+
+CREATE INDEX ix_fund_domicile_country
+    ON fund(domicile_country_id);
+
+CREATE INDEX ix_fund_share_class_fund
+    ON fund_share_class(fund_id);
+
+CREATE INDEX ix_fund_share_class_currency
+    ON fund_share_class(currency_id);
+
+CREATE INDEX ix_fund_provider_mapping_share_class
+    ON fund_provider_mapping(fund_share_class_id);
+
+CREATE INDEX ix_fund_provider_mapping_provider
+    ON fund_provider_mapping(provider_id);
+
+
+CREATE INDEX ix_fx_rate_base_quote_date
+    ON fx_rate (
+        base_currency_id,
+        quote_currency_id,
+        rate_date DESC
+    );
+
+
+CREATE INDEX ix_fund_price_share_class_date
+    ON fund_price (
+        fund_share_class_id,
+        price_date DESC
+    );
+
+CREATE INDEX ix_fund_price_import_batch
+    ON fund_price(import_batch_id);
+
+
+CREATE INDEX ix_import_batch_job
+    ON import_batch(import_job_id);
+
+CREATE INDEX ix_import_item_batch
+    ON import_item(import_batch_id);
+
+CREATE INDEX ix_import_item_fund_price
+    ON import_item(fund_price_id);
+
+
+-- ---------------------------------------------------------------------
+-- Seed Reference Data
+-- ---------------------------------------------------------------------
+
+INSERT INTO provider (
+    code,
+    name,
+    status
+)
+VALUES
     ('MORNINGSTAR', 'Morningstar', 'ACTIVE'),
     ('BLOOMBERG', 'Bloomberg', 'ACTIVE'),
     ('MANUAL', 'Manual Entry', 'ACTIVE');
 
-insert into fx_rate_source (code, name) values
+
+INSERT INTO fx_rate_source (
+    code,
+    name
+)
+VALUES
     ('ECB', 'European Central Bank'),
     ('MANUAL', 'Manual Entry');

@@ -1,26 +1,21 @@
 spring:
   application:
     name: wealth-link-platform
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/wealth_link
-    username: wealth_link
-    password: wealth_link
+    url: jdbc:postgresql://postgres.coolifyprojects.techpulseitservices.com:5433/wealth-link-platform
+    username: weatlh
+    password: Weatlh@123
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
-      ddl-auto: validate   # schema is owned by Flyway migrations, not Hibernate
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
         default_schema: public
     open-in-view: false
-
   flyway:
-    enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: true
+    enabled: false # Disables Flyway so it will never try to recreate existing tables
 
 server:
   port: 8080
