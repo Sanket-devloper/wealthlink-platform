@@ -8,14 +8,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
- * Base class for repository-layer integration tests using Testcontainers + real PostgreSQL.
  */
 @Testcontainers
 @SpringBootTest
 public abstract class AbstractIntegrationTest {
 
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
             .withDatabaseName("wealth_link")
             .withUsername("wealth_link")
             .withPassword("wealth_link");
