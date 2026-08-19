@@ -20,8 +20,8 @@ public class DeclareDividendRequest {
     @NotNull(message = "Fund share class ID is required")
     private UUID fundShareClassId;
 
-    @NotNull(message = "Declaration date is required")
-    private LocalDate declarationDate;
+    @NotNull(message = "Currency ID is required")
+    private UUID currencyId;
 
     @NotNull(message = "Ex-dividend date is required")
     private LocalDate exDate;
@@ -32,14 +32,13 @@ public class DeclareDividendRequest {
     @NotNull(message = "Payment date is required")
     private LocalDate paymentDate;
 
-    @NotNull(message = "Rate per share is required")
-    @DecimalMin(value = "0.00000001", message = "Rate must be positive")
+    @NotNull(message = "Dividend per unit is required")
+    @DecimalMin(value = "0.00000001", message = "Dividend per unit must be greater than zero")
     @Digits(integer = 10, fraction = 8)
-    private BigDecimal ratePerShare;
+    private BigDecimal dividendPerUnit;
 
-    @NotBlank(message = "Dividend currency is required")
-    private String currency;
+    @NotBlank(message = "Source is required (e.g. MANUAL, MARKET_DATA)")
+    private String source;
 
-    @NotBlank(message = "Dividend type is required (e.g., CASH, REINVESTMENT, SPECIAL)")
-    private String dividendType;
+    private UUID correctedFromEventId;
 }
