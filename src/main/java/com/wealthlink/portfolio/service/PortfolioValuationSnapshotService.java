@@ -1,20 +1,15 @@
 package com.wealthlink.portfolio.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.wealthlink.portfolio.dto.ValuationResponse;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.ArrayList;
 
-@Service
-@RequiredArgsConstructor
-public class PortfolioValuationSnapshotService {
+public interface PortfolioValuationSnapshotService {
 
-    public List<Object> getAll() {
-        return new ArrayList<>();
-    }
+    List<ValuationResponse> getAll();
 
-    public Object getById(UUID id) {
-        return null;
-    }
+    ValuationResponse getById(UUID id);
+
+    ValuationResponse createSnapshot(UUID portfolioId, LocalDate valuationDate);
 }
