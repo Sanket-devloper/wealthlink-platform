@@ -16,16 +16,14 @@ import java.util.UUID;
 public class DividendEventResponse {
     private UUID id;
     private UUID fundShareClassId;
-    private LocalDate declarationDate;
+    private UUID currencyId;
+    private String currencyCode;
     private LocalDate exDate;
     private LocalDate recordDate;
     private LocalDate paymentDate;
-    private BigDecimal ratePerShare;
-    private String currency;
-    private String dividendType;
+    private BigDecimal dividendPerUnit;
     private DividendEventStatus status;
-    private BigDecimal totalGrossAmount;
-    private BigDecimal totalTaxAmount;
-    private BigDecimal totalNetAmount;
+    private String source;
+    private UUID correctedFromEventId;
     private Instant createdAt;
 }

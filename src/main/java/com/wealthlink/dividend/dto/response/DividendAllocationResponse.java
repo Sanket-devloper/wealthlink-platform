@@ -16,12 +16,12 @@ public class DividendAllocationResponse {
     private UUID id;
     private UUID dividendEventId;
     private UUID portfolioId;
-    private BigDecimal holdingQuantity;
+    private BigDecimal positionQuantity;
     private BigDecimal grossAmount;
-    private BigDecimal taxWithheldAmount;
+    private BigDecimal taxAmount;
     private BigDecimal netAmount;
-    private String currency;
+    private String currencyCode;
     private DividendAllocationStatus status;
     private UUID journalId;
-    private Instant processedAt;
+    private Instant createdAt;
 }
