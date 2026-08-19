@@ -15,7 +15,21 @@ import java.util.UUID;
  * Follows a standard chart-of-accounts structure using double-entry bookkeeping.
  */
 @Entity
-@Table(name = "ledger_account")
+@Table(
+        name = "ledger_account",
+        uniqueConstraints = {
+                // Only one CASH/POSITION/FEE/TAX account per account+type+currency combination
+                @UniqueConstraint(
+                        name = "uq_ledger_account_account_type_currency",
+                        columnNames = {"account_id", "ledger_account_type", "currency_id"}
+                ),
+                // Only one POSITION/FEE/TAX account per portfolio+type+currency combination
+                @UniqueConstraint(
+                        name = "uq_ledger_account_portfolio_type_currency",
+                        columnNames = {"portfolio_id", "ledger_account_type", "currency_id"}
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor

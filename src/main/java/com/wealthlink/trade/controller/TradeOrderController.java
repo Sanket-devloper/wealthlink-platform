@@ -27,7 +27,7 @@ public class TradeOrderController {
     @GetMapping("/api/v1/trade-orders")
     
     public ResponseEntity<List<OrderResponse>> listOrders() {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+        return ResponseEntity.ok(tradeOrderService.getAll());
     }
 
     @PostMapping("/api/v1/trade-orders")
@@ -39,13 +39,13 @@ public class TradeOrderController {
     @GetMapping("/api/v1/trade-orders/{id}")
     
     public ResponseEntity<OrderResponse> getOrder(@PathVariable UUID id) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+        return ResponseEntity.ok(tradeOrderService.getById(id));
     }
 
     @PostMapping("/api/v1/trade-orders/{id}/cancel")
     
     public ResponseEntity<CancelOrderResponse> cancelOrder(@PathVariable UUID id, @RequestBody CancelOrderRequest payload) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+        return ResponseEntity.ok(tradeOrderService.cancelOrder(id, payload));
     }
 
     @GetMapping("/api/v1/trade-orders/{id}/status")

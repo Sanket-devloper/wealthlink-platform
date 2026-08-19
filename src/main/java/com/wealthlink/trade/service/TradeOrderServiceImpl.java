@@ -30,12 +30,14 @@ public class TradeOrderServiceImpl implements TradeOrderService {
     private final FundShareClassRepository fundShareClassRepository;
     private final CurrencyRepository currencyRepository;
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> getAll() {
         return tradeOrderRepository.findAll().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse getById(UUID id) {
         TradeOrder order = tradeOrderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
