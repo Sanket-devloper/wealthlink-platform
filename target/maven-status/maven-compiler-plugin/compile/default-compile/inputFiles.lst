@@ -51,9 +51,14 @@ D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\we
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\fund\repository\FundShareClassRepository.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\fund\repository\ProviderRepository.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\controller\AppUserController.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\controller\AuthController.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\controller\RoleController.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\AppUserRequest.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\AppUserResponse.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\LoginRequest.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\LoginResponse.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\RegisterRequest.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\RegisterResponse.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\RoleRequest.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\dto\RoleResponse.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\identity\entity\AppUser.java
@@ -117,4 +122,9 @@ D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\we
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\reference\service\impl\CurrencyServiceImpl.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\reference\service\impl\MarketServiceImpl.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\reference\service\MarketService.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\config\Dev1RolePermissions.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\config\SecurityConfig.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\jwt\JwtAuthenticationFilter.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\jwt\JwtService.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\user\CustomUserDetailsService.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\WealthLinkApplication.java

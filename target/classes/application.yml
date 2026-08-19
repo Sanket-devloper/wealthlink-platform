@@ -26,3 +26,9 @@ server:
 logging:
   level:
     org.hibernate.SQL: debug
+
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:change-this-development-secret-to-a-minimum-of-32-characters}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}

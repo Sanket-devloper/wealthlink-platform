@@ -5,6 +5,7 @@ com\wealthlink\marketdata\entity\FxRateSource$FxRateSourceBuilder.class
 com\wealthlink\reference\repository\CurrencyRepository.class
 com\wealthlink\marketdata\repository\FxRateSourceRepository.class
 com\wealthlink\customer\repository\CustomerRepository.class
+com\wealthlink\identity\dto\LoginRequest.class
 com\wealthlink\identity\dto\AppUserRequest.class
 com\wealthlink\reference\entity\Currency.class
 com\wealthlink\identity\entity\Role$RoleBuilder.class
@@ -17,6 +18,7 @@ com\wealthlink\marketdata\entity\RateType.class
 com\wealthlink\importdata\entity\ImportBatchStatus.class
 com\wealthlink\reference\controller\CountryController.class
 com\wealthlink\customer\entity\ContactType.class
+com\wealthlink\identity\controller\AuthController.class
 com\wealthlink\reference\dto\CountryResponse.class
 com\wealthlink\account\controller\AccountController.class
 com\wealthlink\identity\entity\AppUser.class
@@ -34,6 +36,7 @@ com\wealthlink\identity\repository\RoleRepository.class
 com\wealthlink\account\entity\AccountOwner$AccountOwnerBuilder.class
 com\wealthlink\reference\controller\CurrencyController.class
 com\wealthlink\reference\dto\CurrencyRequest.class
+com\wealthlink\security\config\Dev1RolePermissions.class
 com\wealthlink\customer\dto\CustomerIdentifierRequest.class
 com\wealthlink\portfolio\entity\PositionStatus.class
 com\wealthlink\importdata\entity\ImportItem.class
@@ -49,6 +52,7 @@ com\wealthlink\portfolio\entity\PortfolioValuationSnapshot$PortfolioValuationSna
 com\wealthlink\customer\repository\CustomerContactRepository.class
 com\wealthlink\reference\dto\CurrencyResponse.class
 com\wealthlink\customer\entity\CustomerIdentifier.class
+com\wealthlink\identity\dto\LoginResponse.class
 com\wealthlink\customer\dto\CustomerRequest.class
 com\wealthlink\identity\repository\UserRoleRepository.class
 com\wealthlink\marketdata\entity\FxRate$FxRateBuilder.class
@@ -66,6 +70,7 @@ com\wealthlink\portfolio\repository\PortfolioValuationSnapshotRepository.class
 com\wealthlink\customer\service\CustomerService.class
 com\wealthlink\fund\entity\FundStatus.class
 com\wealthlink\marketdata\entity\FxRate.class
+com\wealthlink\security\user\CustomUserDetailsService.class
 com\wealthlink\identity\entity\UserRole$UserRoleBuilder.class
 com\wealthlink\account\dto\AccountResponse.class
 com\wealthlink\fund\entity\FundShareClass$FundShareClassBuilder.class
@@ -78,6 +83,7 @@ com\wealthlink\customer\entity\CustomerContact.class
 com\wealthlink\reference\entity\Market$MarketBuilder.class
 com\wealthlink\identity\controller\RoleController.class
 com\wealthlink\fund\repository\FundShareClassRepository.class
+com\wealthlink\identity\dto\RegisterResponse.class
 com\wealthlink\customer\repository\CustomerIdentifierRepository.class
 com\wealthlink\portfolio\entity\Position.class
 com\wealthlink\reference\dto\MarketRequest.class
@@ -90,11 +96,13 @@ com\wealthlink\portfolio\entity\Portfolio$PortfolioBuilder.class
 com\wealthlink\account\entity\AccountStatus.class
 com\wealthlink\importdata\entity\ImportJobType.class
 com\wealthlink\portfolio\repository\PortfolioRepository.class
+com\wealthlink\security\config\SecurityConfig.class
 com\wealthlink\account\entity\OwnershipRole.class
 com\wealthlink\reference\entity\MarketStatus.class
 com\wealthlink\reference\service\MarketService.class
 com\wealthlink\customer\dto\CustomerIdentifierResponse.class
 com\wealthlink\customer\service\impl\CustomerServiceImpl.class
+com\wealthlink\security\jwt\JwtAuthenticationFilter.class
 com\wealthlink\fund\repository\ProviderRepository.class
 com\wealthlink\reference\entity\Market.class
 com\wealthlink\account\repository\AccountOwnerRepository.class
@@ -132,6 +140,7 @@ com\wealthlink\customer\dto\CustomerContactResponse.class
 com\wealthlink\identity\service\AppUserService.class
 com\wealthlink\account\entity\AccountOwner.class
 com\wealthlink\identity\service\impl\AppUserServiceImpl.class
+com\wealthlink\security\jwt\JwtService.class
 com\wealthlink\fund\entity\Provider$ProviderBuilder.class
 com\wealthlink\reference\repository\CountryRepository.class
 com\wealthlink\fund\entity\Provider.class
@@ -143,4 +152,5 @@ com\wealthlink\marketdata\entity\PriceType.class
 com\wealthlink\customer\entity\Customer.class
 com\wealthlink\dividend\entity\DividendEvent$DividendEventBuilder.class
 com\wealthlink\identity\service\impl\RoleServiceImpl.class
+com\wealthlink\identity\dto\RegisterRequest.class
 com\wealthlink\identity\dto\RoleRequest.class

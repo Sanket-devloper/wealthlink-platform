@@ -2,6 +2,7 @@ com\wealthlink\identity\entity\AppUserTest.class
 com\wealthlink\customer\CustomerRepositoryIT.class
 com\wealthlink\portfolio\PortfolioRepositoryIT.class
 com\wealthlink\customer\entity\CustomerTest.class
+com\wealthlink\identity\controller\AuthControllerTest.class
 com\wealthlink\account\AccountRepositoryIT.class
 com\wealthlink\marketdata\MarketDataRepositoryIT.class
 com\wealthlink\fund\entity\FundTest.class

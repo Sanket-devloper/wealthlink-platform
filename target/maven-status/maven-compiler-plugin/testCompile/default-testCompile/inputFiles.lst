@@ -6,6 +6,7 @@ D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\we
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\wealthlink\dividend\entity\DividendEventTest.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\wealthlink\fund\entity\FundTest.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\wealthlink\fund\FundRepositoryIT.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\wealthlink\identity\controller\AuthControllerTest.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\wealthlink\identity\entity\AppUserTest.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\wealthlink\identity\IdentityRepositoryIT.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\test\java\com\wealthlink\importdata\entity\ImportBatchTest.java
