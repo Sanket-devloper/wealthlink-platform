@@ -54,13 +54,13 @@ public class LedgerAccountServiceImpl implements LedgerAccountService {
         }
 
         LedgerAccount account = new LedgerAccount();
-        account.setAccountCode(UUID.randomUUID().toString()); // simplified code generation
+        account.setAccountCode(request.getAccountCode());
         account.setAccountName(request.getAccountName());
         account.setLedgerAccountType(LedgerAccountType.valueOf(request.getLedgerAccountType()));
         account.setStatus(LedgerAccountStatus.ACTIVE);
         account.setCurrency(currencyRepository.findById(request.getCurrencyId())
                 .orElseThrow(() -> new RuntimeException("Currency not found")));
-        account.setBalance(BigDecimal.ZERO);
+        account.setBalance(request.getBalance() != null ? request.getBalance() : BigDecimal.ZERO);
         account.setDescription(request.getDescription());
 
         if (request.getAccountId() != null) {

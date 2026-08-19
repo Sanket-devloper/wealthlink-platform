@@ -2,6 +2,7 @@ package com.wealthlink.ledger.dto;
 
 import lombok.Data;
 import java.util.UUID;
+import java.math.BigDecimal;
 
 @Data
 public class CreateLedgerAccountRequest {
@@ -11,5 +12,6 @@ public class CreateLedgerAccountRequest {
     private UUID currencyId;
     private UUID accountId;
     private UUID portfolioId;
+    private BigDecimal balance;
     private String description;
 }

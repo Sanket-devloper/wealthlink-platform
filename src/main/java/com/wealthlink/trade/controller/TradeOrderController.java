@@ -14,11 +14,15 @@ import com.wealthlink.trade.dto.CancelOrderResponse;
 import com.wealthlink.trade.dto.CreateOrderRequest;
 import com.wealthlink.trade.dto.OrderResponse;
 
+import com.wealthlink.trade.service.TradeOrderService;
+
 @Tag(name = "Dev 3 - Portfolio, Trading & Ledger", description = "Core money-movement path")
 @Tag(name = "Trading APIs", description = "Maintained by: Rushikesh Mind")
 @RestController
 @RequiredArgsConstructor
 public class TradeOrderController {
+
+    private final TradeOrderService tradeOrderService;
 
     @GetMapping("/api/v1/trade-orders")
     
@@ -29,7 +33,7 @@ public class TradeOrderController {
     @PostMapping("/api/v1/trade-orders")
     
     public ResponseEntity<OrderResponse> createOrder(@RequestBody CreateOrderRequest payload) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+        return ResponseEntity.ok(tradeOrderService.createOrder(payload));
     }
 
     @GetMapping("/api/v1/trade-orders/{id}")

@@ -11,16 +11,20 @@ import java.util.UUID;
 
 import com.wealthlink.portfolio.dto.*;
 
+import com.wealthlink.portfolio.service.PortfolioService;
+
 @Tag(name = "Dev 3 - Portfolio, Trading & Ledger", description = "Core money-movement path")
 @Tag(name = "Portfolio APIs", description = "Maintained by: Rushikesh Mind")
 @RestController
 @RequiredArgsConstructor
 public class PortfolioController {
 
+    private final PortfolioService portfolioService;
+
     @PostMapping("/api/v1/portfolios")
     
     public ResponseEntity<PortfolioResponse> createPortfolio(@RequestBody CreatePortfolioRequest payload) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+        return ResponseEntity.ok(portfolioService.createPortfolio(payload));
     }
 
     @GetMapping("/api/v1/portfolios/{id}")
