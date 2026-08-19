@@ -11,6 +11,7 @@ import com.wealthlink.reference.repository.CurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.wealthlink.portfolio.entity.PortfolioStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,7 +50,7 @@ public class PortfolioServiceImpl implements PortfolioService {
         portfolio.setPortfolioType(PortfolioType.valueOf(request.getPortfolioType()));
         portfolio.setBaseCurrency(currencyRepository.findById(request.getBaseCurrencyId())
                 .orElseThrow(() -> new RuntimeException("Currency not found")));
-        portfolio.setStatus("ACTIVE");
+        portfolio.setStatus(PortfolioStatus.ACTIVE);
 
         Portfolio saved = portfolioRepository.save(portfolio);
         return mapToResponse(saved);
@@ -63,11 +64,10 @@ public class PortfolioServiceImpl implements PortfolioService {
     private PortfolioResponse mapToResponse(Portfolio portfolio) {
         return PortfolioResponse.builder()
                 .id(portfolio.getId())
-                .accountId(portfolio.getAccount().getId())
                 .portfolioNumber(portfolio.getPortfolioNumber())
                 .portfolioType(portfolio.getPortfolioType().name())
                 .baseCurrency(portfolio.getBaseCurrency().getIsoCode())
-                .status(portfolio.getStatus())
+                .status(portfolio.getStatus().name())
                 .build();
     }
 }

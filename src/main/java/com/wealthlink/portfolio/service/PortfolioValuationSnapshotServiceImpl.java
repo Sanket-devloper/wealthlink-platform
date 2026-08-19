@@ -51,7 +51,6 @@ public class PortfolioValuationSnapshotServiceImpl implements PortfolioValuation
 
     private ValuationResponse mapToResponse(PortfolioValuationSnapshot snapshot) {
         return ValuationResponse.builder()
-                .id(snapshot.getId())
                 .portfolioId(snapshot.getPortfolio().getId())
                 .valuationDate(snapshot.getValuationDate())
                 .totalValue(snapshot.getTotalValue())

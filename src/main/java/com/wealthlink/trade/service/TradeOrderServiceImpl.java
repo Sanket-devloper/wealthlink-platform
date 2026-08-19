@@ -84,9 +84,8 @@ public class TradeOrderServiceImpl implements TradeOrderService {
         TradeOrder saved = tradeOrderRepository.save(order);
         
         return CancelOrderResponse.builder()
-                .id(saved.getId())
+                .orderId(saved.getId())
                 .status(saved.getStatus().name())
-                .reason(request.getReason())
                 .build();
     }
 

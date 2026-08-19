@@ -82,8 +82,8 @@ public class SettlementServiceImpl implements SettlementService {
         
         Settlement saved = settlementRepository.save(settlement);
         return RetrySettlementResponse.builder()
-                .id(saved.getId())
-                .status(saved.getStatus().name())
+                .settlementId(saved.getId())
+                .settlementStatus(saved.getStatus().name())
                 .build();
     }
 

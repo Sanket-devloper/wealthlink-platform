@@ -18,7 +18,7 @@ public class PortfolioValuationSnapshotController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public ResponseEntity<List<Object>> getAll() {
+    public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 

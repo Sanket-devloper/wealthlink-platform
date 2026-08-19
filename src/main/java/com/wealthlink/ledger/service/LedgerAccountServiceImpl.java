@@ -7,6 +7,7 @@ import com.wealthlink.ledger.entity.JournalEntry;
 import com.wealthlink.ledger.entity.JournalEntryDirection;
 import com.wealthlink.ledger.entity.LedgerAccount;
 import com.wealthlink.ledger.entity.LedgerAccountType;
+import com.wealthlink.ledger.entity.LedgerAccountStatus;
 import com.wealthlink.ledger.repository.JournalEntryRepository;
 import com.wealthlink.ledger.repository.LedgerAccountRepository;
 import com.wealthlink.account.repository.AccountRepository;
@@ -56,7 +57,7 @@ public class LedgerAccountServiceImpl implements LedgerAccountService {
         account.setAccountCode(UUID.randomUUID().toString()); // simplified code generation
         account.setAccountName(request.getAccountName());
         account.setLedgerAccountType(LedgerAccountType.valueOf(request.getLedgerAccountType()));
-        account.setStatus("ACTIVE");
+        account.setStatus(LedgerAccountStatus.ACTIVE);
         account.setCurrency(currencyRepository.findById(request.getCurrencyId())
                 .orElseThrow(() -> new RuntimeException("Currency not found")));
         account.setBalance(BigDecimal.ZERO);
@@ -85,13 +86,13 @@ public class LedgerAccountServiceImpl implements LedgerAccountService {
         BigDecimal balance = BigDecimal.ZERO;
         for (JournalEntry entry : entries) {
             if (entry.getDirection() == JournalEntryDirection.DEBIT) {
-                if (account.getLedgerAccountType() == LedgerAccountType.ASSET || account.getLedgerAccountType() == LedgerAccountType.EXPENSE) {
+                if (account.getLedgerAccountType() == LedgerAccountType.CASH || account.getLedgerAccountType() == LedgerAccountType.POSITION) {
                     balance = balance.add(entry.getAmount());
                 } else {
                     balance = balance.subtract(entry.getAmount());
                 }
             } else {
-                if (account.getLedgerAccountType() == LedgerAccountType.LIABILITY || account.getLedgerAccountType() == LedgerAccountType.EQUITY || account.getLedgerAccountType() == LedgerAccountType.REVENUE) {
+                if (account.getLedgerAccountType() == LedgerAccountType.TAX || account.getLedgerAccountType() == LedgerAccountType.FEE || account.getLedgerAccountType() == LedgerAccountType.SUSPENSE) {
                     balance = balance.add(entry.getAmount());
                 } else {
                     balance = balance.subtract(entry.getAmount());
