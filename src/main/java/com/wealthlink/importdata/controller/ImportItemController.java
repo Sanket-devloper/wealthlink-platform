@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/import-items")
+@RequestMapping("/api/v1/import-items")
 @RequiredArgsConstructor
 public class ImportItemController {
 
@@ -82,5 +82,13 @@ public class ImportItemController {
         importItemService.deleteImportItem(id);
 
         return ResponseEntity.noContent().build();
+    }
+    @PostMapping("/{id}/retry")
+    public ResponseEntity<Void> retryImportItem(
+            @PathVariable("id") UUID id) {
+
+        importItemService.retryImportItem(id);
+
+        return ResponseEntity.accepted().build();
     }
 }

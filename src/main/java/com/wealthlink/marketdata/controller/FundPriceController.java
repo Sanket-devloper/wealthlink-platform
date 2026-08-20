@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/fund-prices")
+@RequestMapping("/api/v1/fund-prices")
 @RequiredArgsConstructor
 public class FundPriceController {
 

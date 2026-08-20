@@ -27,4 +27,5 @@ public interface ImportItemService {
     );
 
     void deleteImportItem(UUID id);
+    void retryImportItem(UUID id);
 }

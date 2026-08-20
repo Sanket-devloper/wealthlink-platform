@@ -19,4 +19,5 @@ public interface ImportBatchService {
     List<ImportBatchResponse> getImportBatchesByImportJob(UUID importJobId);
 
     void deleteImportBatch(UUID id);
+    void retryImportBatch(UUID batchId);
 }
