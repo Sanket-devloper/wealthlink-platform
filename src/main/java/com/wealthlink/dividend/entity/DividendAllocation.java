@@ -20,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id")   //Generate equals() and hashCode() methods using only the id field.
 public class DividendAllocation {
 
     @Id

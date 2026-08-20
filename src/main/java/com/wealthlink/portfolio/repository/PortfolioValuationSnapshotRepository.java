@@ -8,5 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface PortfolioValuationSnapshotRepository extends JpaRepository<PortfolioValuationSnapshot, UUID> {
-    Optional<PortfolioValuationSnapshot> findByPortfolioIdAndValuationDate(UUID portfolioId, LocalDate valuationDate);
+   
+    Optional<PortfolioValuationSnapshot>findByPortfolioIdAndValuationDate(UUID portfolioId, LocalDate valuationDate);
 }
