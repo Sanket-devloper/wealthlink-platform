@@ -10,6 +10,7 @@ import com.wealthlink.importdata.repository.ImportBatchRepository;
 import com.wealthlink.importdata.repository.ImportJobRepository;
 import com.wealthlink.importdata.service.ImportBatchService;
 import lombok.RequiredArgsConstructor;
+import com.wealthlink.importdata.entity.ImportBatchStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,17 +30,13 @@ public class ImportBatchServiceImpl implements ImportBatchService {
     public ImportBatchResponse createImportBatch(
             ImportBatchCreateRequest request) {
 
-        /*
-         * Idempotency check.
-         *
-         * If the same key was already used, return the
-         * existing batch instead of creating a duplicate.
-         */
+        // 1. Idempotency check
         return importBatchRepository
                 .findByIdempotencyKey(request.idempotencyKey())
                 .map(importBatchMapper::toResponse)
                 .orElseGet(() -> {
 
+                    // 2. Validate Import Job
                     ImportJob importJob = importJobRepository
                             .findById(request.importJobId())
                             .orElseThrow(() ->
@@ -48,17 +45,21 @@ public class ImportBatchServiceImpl implements ImportBatchService {
                                                     + request.importJobId()
                                     ));
 
+                    // 3. Create new batch
                     ImportBatch importBatch = ImportBatch.builder()
                             .importJob(importJob)
                             .idempotencyKey(request.idempotencyKey())
+                            .status(ImportBatchStatus.RUNNING)
+                            .totalItems(0)
+                            .successCount(0)
+                            .failureCount(0)
                             .build();
 
+                    // 4. Persist
                     ImportBatch savedImportBatch =
-                            importBatchRepository.save(importBatch);
+                            importBatchRepository.saveAndFlush(importBatch);
 
-                    return importBatchMapper.toResponse(
-                            savedImportBatch
-                    );
+                    return importBatchMapper.toResponse(savedImportBatch);
                 });
     }
 
@@ -105,5 +106,26 @@ public class ImportBatchServiceImpl implements ImportBatchService {
                         new ImportBatchNotFoundException(id));
 
         importBatchRepository.delete(importBatch);
+    }
+
+    @Override
+    public void retryImportBatch(UUID batchId) {
+
+        ImportBatch batch = importBatchRepository
+                .findById(batchId)
+                .orElseThrow(() ->
+                        new ImportBatchNotFoundException(batchId));
+
+        if (batch.getStatus() == ImportBatchStatus.RUNNING) {
+
+            throw new IllegalStateException(
+                    "Import batch is already running"
+            );
+        }
+
+        batch.setStatus(ImportBatchStatus.RUNNING);
+        batch.setCompletedAt(null);
+
+        importBatchRepository.save(batch);
     }
 }

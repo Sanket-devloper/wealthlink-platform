@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/fx-rates")
+@RequestMapping("/api/v1/fx-rates")
 @RequiredArgsConstructor
 public class FxRateController {
 
