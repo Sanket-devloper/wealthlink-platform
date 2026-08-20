@@ -1,5 +1,7 @@
 package com.wealthlink.portfolio.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.portfolio.dto.ValuationResponse;
 import com.wealthlink.portfolio.entity.PortfolioValuationSnapshot;
 import com.wealthlink.portfolio.repository.PortfolioRepository;
@@ -31,7 +33,7 @@ public class PortfolioValuationSnapshotServiceImpl implements PortfolioValuation
     @Override
     public ValuationResponse getById(UUID id) {
         PortfolioValuationSnapshot snapshot = snapshotRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Snapshot not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("PortfolioValuationSnapshot", id));
         return mapToResponse(snapshot);
     }
 
@@ -40,13 +42,30 @@ public class PortfolioValuationSnapshotServiceImpl implements PortfolioValuation
     public ValuationResponse createSnapshot(UUID portfolioId, LocalDate valuationDate) {
         PortfolioValuationSnapshot snapshot = new PortfolioValuationSnapshot();
         snapshot.setPortfolio(portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio", portfolioId)));
         snapshot.setValuationDate(valuationDate);
         snapshot.setTotalValue(BigDecimal.ZERO); // Stub
         snapshot.setCurrency(snapshot.getPortfolio().getBaseCurrency());
 
         PortfolioValuationSnapshot saved = snapshotRepository.save(snapshot);
         return mapToResponse(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ValuationResponse getLatestValuation(UUID portfolioId) {
+        return snapshotRepository.findByPortfolioIdOrderByValuationDateDesc(portfolioId).stream()
+                .findFirst()
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Latest Valuation for Portfolio", portfolioId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ValuationResponse> getValuationHistory(UUID portfolioId) {
+        return snapshotRepository.findByPortfolioIdOrderByValuationDateDesc(portfolioId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private ValuationResponse mapToResponse(PortfolioValuationSnapshot snapshot) {

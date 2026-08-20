@@ -1,5 +1,7 @@
 package com.wealthlink.trade.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.ledger.dto.CreateJournalEntryRequest;
 import com.wealthlink.ledger.dto.CreateJournalRequest;
 import com.wealthlink.ledger.entity.JournalEntryDirection;
@@ -39,7 +41,7 @@ public class SettlementServiceImpl implements SettlementService {
     @Transactional
     public SettlementResponse createSettlement(UUID executionId, CreateSettlementRequest request) {
         TradeExecution execution = tradeExecutionRepository.findById(executionId)
-                .orElseThrow(() -> new RuntimeException("Trade Execution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TradeExecution", executionId));
                 
         // Settlement check removed; in real world, check if a Settlement entity already exists for this executionId.
 
@@ -50,7 +52,7 @@ public class SettlementServiceImpl implements SettlementService {
         settlement.setSettlementDate(request.getSettlementDate());
         settlement.setSettledAt(Instant.now());
         settlement.setCurrency(currencyRepository.findById(request.getCurrencyId())
-                .orElseThrow(() -> new RuntimeException("Currency not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Currency", request.getCurrencyId())));
         settlement.setSettledAmount(request.getSettlementAmount());
         
         Settlement savedSettlement = settlementRepository.save(settlement);
@@ -68,7 +70,7 @@ public class SettlementServiceImpl implements SettlementService {
     @Transactional
     public RetrySettlementResponse retrySettlement(UUID settlementId) {
         Settlement settlement = settlementRepository.findById(settlementId)
-                .orElseThrow(() -> new RuntimeException("Settlement not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Settlement", settlementId));
         
         if (settlement.getStatus() == SettlementStatus.SETTLED) {
             throw new IllegalStateException("Settlement is already SETTLED.");
@@ -93,12 +95,12 @@ public class SettlementServiceImpl implements SettlementService {
         // Fetch Cash Account for this client
         LedgerAccount cashAccount = ledgerAccountRepository.findByAccountIdAndLedgerAccountTypeAndCurrencyId(
                 order.getPortfolio().getAccount().getId(), LedgerAccountType.CASH, execution.getCurrency().getId()
-        ).orElseThrow(() -> new RuntimeException("Cash Ledger Account not found for Account ID: " + order.getPortfolio().getAccount().getId()));
+        ).orElseThrow(() -> new ResourceNotFoundException("Ledger Account", order.getPortfolio().getAccount().getId()));
         
         // Fetch Position Account for this portfolio
         LedgerAccount positionAccount = ledgerAccountRepository.findByPortfolioIdAndLedgerAccountTypeAndCurrencyId(
                 order.getPortfolio().getId(), LedgerAccountType.POSITION, execution.getCurrency().getId()
-        ).orElseThrow(() -> new RuntimeException("Position Ledger Account not found for Portfolio ID: " + order.getPortfolio().getId()));
+        ).orElseThrow(() -> new ResourceNotFoundException("Ledger Account", order.getPortfolio().getId()));
 
         CreateJournalEntryRequest debit = new CreateJournalEntryRequest();
         debit.setCurrencyId(execution.getCurrency().getId());
@@ -134,6 +136,14 @@ public class SettlementServiceImpl implements SettlementService {
         journalReq.setEntries(Arrays.asList(debit, credit));
 
         journalService.createJournal(journalReq);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SettlementResponse getSettlementById(UUID settlementId) {
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(() -> new com.wealthlink.common.exception.ResourceNotFoundException("Settlement", settlementId));
+        return mapToResponse(settlement);
     }
 
     private SettlementResponse mapToResponse(Settlement settlement) {

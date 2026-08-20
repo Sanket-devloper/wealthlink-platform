@@ -14,4 +14,6 @@ public interface PositionService {
     void updatePositionFromExecution(TradeExecution execution);
 
     PositionResponse rebuildPosition(UUID positionId);
+
+    List<PositionResponse> getPositionsByPortfolioId(UUID portfolioId);
 }

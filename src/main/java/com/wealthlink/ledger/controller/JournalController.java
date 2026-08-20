@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.UUID;
 
 import com.wealthlink.ledger.dto.JournalResponse;
+import com.wealthlink.ledger.dto.JournalResponse.JournalEntryResponse;
 import com.wealthlink.ledger.dto.ReverseJournalRequest;
 import com.wealthlink.ledger.dto.ReverseJournalResponse;
+import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "Dev 3 - Portfolio, Trading & Ledger", description = "Core money-movement path")
 @Tag(name = "Ledger APIs", description = "Maintained by: Rushikesh Mind")
@@ -19,6 +21,7 @@ import com.wealthlink.ledger.dto.ReverseJournalResponse;
 public class JournalController {
 
     private final com.wealthlink.ledger.service.JournalService journalService;
+    private final com.wealthlink.ledger.service.JournalEntryService journalEntryService;
 
     @PostMapping("/api/v1/journals")
     
@@ -28,27 +31,21 @@ public class JournalController {
 
     @GetMapping("/api/v1/journals/{journalId}")
     
-    public ResponseEntity<JournalResponse> getJournal(@PathVariable UUID journalId) {
+    public ResponseEntity<JournalResponse> getJournal(@Parameter(description = "Journal ID") @PathVariable UUID journalId) {
         return ResponseEntity.ok(journalService.getById(journalId));
     }
 
     @GetMapping("/api/v1/journals/{journalId}/entries")
     
-    public ResponseEntity<List<Object>> listJournalEntries(@PathVariable UUID journalId) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service if needed
-    }
-
-    @PostMapping("/api/v1/journals/{journalId}/entries")
-    
-    public ResponseEntity<Object> createJournalEntry(@PathVariable UUID journalId, @RequestBody Object payload) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+    public ResponseEntity<List<JournalEntryResponse>> listJournalEntries(@Parameter(description = "Journal ID") @PathVariable UUID journalId) {
+        return ResponseEntity.ok(journalEntryService.getEntriesByJournalId(journalId));
     }
 
     // Keep reverse journal as it's useful, though not strictly in the basic requirements
     @PostMapping("/api/v1/journals/{id}/reverse")
     
-    public ResponseEntity<ReverseJournalResponse> reverseJournal(@PathVariable UUID id, @RequestBody ReverseJournalRequest payload) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+    public ResponseEntity<ReverseJournalResponse> reverseJournal(@Parameter(description = "Journal ID") @PathVariable UUID id, @RequestBody ReverseJournalRequest payload) {
+        return ResponseEntity.ok(journalService.reverseJournal(id, payload));
     }
 
 }

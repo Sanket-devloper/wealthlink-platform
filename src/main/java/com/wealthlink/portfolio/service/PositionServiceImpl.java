@@ -1,5 +1,7 @@
 package com.wealthlink.portfolio.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.ledger.entity.JournalEntry;
 import com.wealthlink.ledger.entity.JournalEntryDirection;
 import com.wealthlink.ledger.entity.LedgerAccount;
@@ -37,7 +39,7 @@ public class PositionServiceImpl implements PositionService {
     }
 
     public PositionResponse getById(UUID id) {
-        Position position = positionRepository.findById(id).orElseThrow(() -> new RuntimeException("Position not found"));
+        Position position = positionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Position", id));
         return mapToResponse(position);
     }
 
@@ -91,11 +93,11 @@ public class PositionServiceImpl implements PositionService {
     @Transactional
     public PositionResponse rebuildPosition(UUID positionId) {
         Position position = positionRepository.findById(positionId)
-                .orElseThrow(() -> new RuntimeException("Position not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Position", positionId));
 
         LedgerAccount positionAccount = ledgerAccountRepository.findByPortfolioIdAndLedgerAccountTypeAndCurrencyId(
                 position.getPortfolio().getId(), LedgerAccountType.POSITION, position.getCurrency().getId()
-        ).orElseThrow(() -> new RuntimeException("Position Ledger Account not found"));
+        ).orElseThrow(() -> new ResourceNotFoundException("Ledger Account", position.getPortfolio().getId()));
 
         List<JournalEntry> entries = journalEntryRepository.findByLedgerAccountId(positionAccount.getId());
         
@@ -125,6 +127,14 @@ public class PositionServiceImpl implements PositionService {
         position.setMarketValue(computedQuantity);
         
         return mapToResponse(positionRepository.save(position));
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<PositionResponse> getPositionsByPortfolioId(UUID portfolioId) {
+        return positionRepository.findByPortfolioId(portfolioId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
     
     private PositionResponse mapToResponse(Position position) {

@@ -12,4 +12,8 @@ public interface PortfolioValuationSnapshotService {
     ValuationResponse getById(UUID id);
 
     ValuationResponse createSnapshot(UUID portfolioId, LocalDate valuationDate);
+
+    ValuationResponse getLatestValuation(UUID portfolioId);
+
+    List<ValuationResponse> getValuationHistory(UUID portfolioId);
 }

@@ -1,5 +1,6 @@
 package com.wealthlink.trade.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
 import com.wealthlink.reference.entity.Currency;
 import com.wealthlink.reference.repository.CurrencyRepository;
 import com.wealthlink.trade.dto.ExecutionResponse;
@@ -109,12 +110,12 @@ class TradeExecutionServiceImplTest {
     }
 
     @Test
-    void getById_throwsRuntimeException_whenExecutionNotFound() {
+    void getById_throwsResourceNotFoundException_whenExecutionNotFound() {
         UUID id = UUID.randomUUID();
         when(tradeExecutionRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getById(id))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("not found");
     }
 

@@ -1,5 +1,6 @@
 package com.wealthlink.trade.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
 import com.wealthlink.fund.entity.FundShareClass;
 import com.wealthlink.fund.repository.FundShareClassRepository;
 import com.wealthlink.portfolio.entity.Portfolio;
@@ -94,12 +95,12 @@ class TradeOrderServiceImplTest {
     }
 
     @Test
-    void getById_throwsRuntimeException_whenOrderNotFound() {
+    void getById_throwsResourceNotFoundException_whenOrderNotFound() {
         UUID id = UUID.randomUUID();
         when(tradeOrderRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getById(id))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("not found");
     }
 

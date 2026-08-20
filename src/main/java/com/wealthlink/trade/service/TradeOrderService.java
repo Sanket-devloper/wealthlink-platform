@@ -17,4 +17,6 @@ public interface TradeOrderService {
     OrderResponse createOrder(CreateOrderRequest request);
 
     CancelOrderResponse cancelOrder(UUID id, CancelOrderRequest request);
+
+    List<OrderResponse> getOrdersForPortfolio(UUID portfolioId);
 }

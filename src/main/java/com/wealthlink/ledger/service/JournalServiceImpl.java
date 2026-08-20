@@ -1,5 +1,7 @@
 package com.wealthlink.ledger.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.ledger.dto.CreateJournalEntryRequest;
 import com.wealthlink.ledger.dto.CreateJournalRequest;
 import com.wealthlink.ledger.dto.JournalResponse;
@@ -28,6 +30,7 @@ public class JournalServiceImpl implements JournalService {
     private final CurrencyRepository currencyRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<JournalResponse> getAll() {
         return journalRepository.findAll().stream()
                 .map(this::mapToResponse)
@@ -35,9 +38,10 @@ public class JournalServiceImpl implements JournalService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public JournalResponse getById(UUID id) {
         Journal journal = journalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Journal not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Journal", id));
         return mapToResponse(journal);
     }
 
@@ -68,11 +72,11 @@ public class JournalServiceImpl implements JournalService {
             JournalEntry entry = new JournalEntry();
             entry.setJournal(journal);
             entry.setLedgerAccount(ledgerAccountRepository.findById(entryReq.getLedgerAccountId())
-                    .orElseThrow(() -> new RuntimeException("Ledger Account not found")));
+                    .orElseThrow(() -> new ResourceNotFoundException("LedgerAccount", entryReq.getLedgerAccountId())));
             entry.setDirection(JournalEntryDirection.valueOf(entryReq.getDirection()));
             entry.setAmount(entryReq.getAmount());
             entry.setCurrency(currencyRepository.findById(entryReq.getCurrencyId())
-                    .orElseThrow(() -> new RuntimeException("Currency not found")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Currency", entryReq.getCurrencyId())));
             entry.setDescription(entryReq.getDescription());
             entries.add(entry);
         }
@@ -86,7 +90,7 @@ public class JournalServiceImpl implements JournalService {
     @Transactional
     public ReverseJournalResponse reverseJournal(UUID id, ReverseJournalRequest request) {
         Journal original = journalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Journal not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Journal", id));
 
         if (original.getStatus() != JournalStatus.POSTED) {
             throw new IllegalStateException("Only POSTED journals can be reversed. Current status: " + original.getStatus());

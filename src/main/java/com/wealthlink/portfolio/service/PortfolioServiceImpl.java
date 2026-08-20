@@ -1,5 +1,7 @@
 package com.wealthlink.portfolio.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.portfolio.dto.CreatePortfolioRequest;
 import com.wealthlink.portfolio.dto.PortfolioResponse;
 import com.wealthlink.portfolio.dto.ValuationResponse;
@@ -27,6 +29,7 @@ public class PortfolioServiceImpl implements PortfolioService {
     private final CurrencyRepository currencyRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<PortfolioResponse> getAll() {
         return portfolioRepository.findAll().stream()
                 .map(this::mapToResponse)
@@ -34,9 +37,10 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PortfolioResponse getById(UUID id) {
         Portfolio portfolio = portfolioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio", id));
         return mapToResponse(portfolio);
     }
 
@@ -45,11 +49,11 @@ public class PortfolioServiceImpl implements PortfolioService {
     public PortfolioResponse createPortfolio(CreatePortfolioRequest request) {
         Portfolio portfolio = new Portfolio();
         portfolio.setAccount(accountRepository.findById(request.getAccountId())
-                .orElseThrow(() -> new RuntimeException("Account not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Account", request.getAccountId())));
         portfolio.setPortfolioNumber(UUID.randomUUID().toString()); // Stub for generation
         portfolio.setPortfolioType(PortfolioType.valueOf(request.getPortfolioType()));
         portfolio.setBaseCurrency(currencyRepository.findById(request.getBaseCurrencyId())
-                .orElseThrow(() -> new RuntimeException("Currency not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Currency", request.getBaseCurrencyId())));
         portfolio.setStatus(PortfolioStatus.ACTIVE);
 
         Portfolio saved = portfolioRepository.save(portfolio);
@@ -59,6 +63,25 @@ public class PortfolioServiceImpl implements PortfolioService {
     @Override
     public ValuationResponse getValuation(UUID portfolioId, LocalDate valuationDate) {
         throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    @Transactional
+    public PortfolioResponse updatePortfolio(UUID id, com.wealthlink.portfolio.dto.UpdatePortfolioRequest request) {
+        Portfolio portfolio = portfolioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio", id));
+        if (request.getStatus() != null) {
+            portfolio.setStatus(PortfolioStatus.valueOf(request.getStatus()));
+        }
+        return mapToResponse(portfolioRepository.save(portfolio));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PortfolioResponse> getPortfoliosByAccountId(UUID accountId) {
+        return portfolioRepository.findByAccountId(accountId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private PortfolioResponse mapToResponse(Portfolio portfolio) {

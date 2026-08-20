@@ -2,6 +2,7 @@ package com.wealthlink.ledger.service;
 
 import com.wealthlink.account.entity.Account;
 import com.wealthlink.account.repository.AccountRepository;
+import com.wealthlink.common.exception.ResourceNotFoundException;
 import com.wealthlink.ledger.dto.CreateLedgerAccountRequest;
 import com.wealthlink.ledger.dto.LedgerAccountResponse;
 import com.wealthlink.ledger.dto.LedgerBalanceResponse;
@@ -220,12 +221,12 @@ class LedgerAccountServiceImplTest {
     }
 
     @Test
-    void getBalance_throws_whenLedgerAccountNotFound() {
+    void getBalance_throwsResourceNotFoundException_whenLedgerAccountNotFound() {
         UUID accountId = UUID.randomUUID();
         when(ledgerAccountRepository.findById(accountId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getBalance(accountId))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("not found");
     }
 }

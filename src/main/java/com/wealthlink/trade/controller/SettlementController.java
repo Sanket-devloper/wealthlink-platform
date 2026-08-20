@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,26 +24,27 @@ public class SettlementController {
 
     @PostMapping("/api/v1/trade-executions/{executionId}/settlement")
     
-    public ResponseEntity<SettlementResponse> createSettlement(@PathVariable UUID executionId, @RequestBody CreateSettlementRequest payload) {
+    public ResponseEntity<SettlementResponse> createSettlement(@Parameter(description = "Execution ID") @PathVariable UUID executionId, @RequestBody CreateSettlementRequest payload) {
         return ResponseEntity.ok(settlementService.createSettlement(executionId, payload));
     }
 
     @GetMapping("/api/v1/settlements/{settlementId}")
     
-    public ResponseEntity<SettlementResponse> getSettlement(@PathVariable UUID settlementId) {
-        return ResponseEntity.ok().build(); // TODO: implement getById
+    public ResponseEntity<SettlementResponse> getSettlement(@Parameter(description = "Settlement ID") @PathVariable UUID settlementId) {
+        return ResponseEntity.ok(settlementService.getSettlementById(settlementId));
     }
 
     @PostMapping("/api/v1/settlements/{settlementId}/complete")
     
-    public ResponseEntity<RetrySettlementResponse> completeSettlement(@PathVariable UUID settlementId, @RequestBody Object payload) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+    public ResponseEntity<RetrySettlementResponse> completeSettlement(@Parameter(description = "Settlement ID") @PathVariable UUID settlementId, @RequestBody(required = false) Object payload) {
+        return ResponseEntity.ok(settlementService.retrySettlement(settlementId));
     }
 
     @GetMapping("/api/v1/settlements/{settlementId}/status")
     
-    public ResponseEntity<Object> getSettlementStatus(@PathVariable UUID settlementId) {
-        return ResponseEntity.ok().build(); // TODO: Delegate to Service
+    public ResponseEntity<Object> getSettlementStatus(@Parameter(description = "Settlement ID") @PathVariable UUID settlementId) {
+        SettlementResponse response = settlementService.getSettlementById(settlementId);
+        return ResponseEntity.ok(java.util.Map.of("status", response.getSettlementStatus()));
     }
 
 }

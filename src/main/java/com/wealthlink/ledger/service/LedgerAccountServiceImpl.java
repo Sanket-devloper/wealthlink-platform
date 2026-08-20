@@ -1,5 +1,7 @@
 package com.wealthlink.ledger.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.ledger.dto.CreateLedgerAccountRequest;
 import com.wealthlink.ledger.dto.LedgerAccountResponse;
 import com.wealthlink.ledger.dto.LedgerBalanceResponse;
@@ -33,6 +35,7 @@ public class LedgerAccountServiceImpl implements LedgerAccountService {
     private final JournalEntryRepository journalEntryRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<LedgerAccountResponse> getAll() {
         return ledgerAccountRepository.findAll().stream()
                 .map(this::mapToResponse)
@@ -40,9 +43,10 @@ public class LedgerAccountServiceImpl implements LedgerAccountService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LedgerAccountResponse getById(UUID id) {
         LedgerAccount ledgerAccount = ledgerAccountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ledger Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("LedgerAccount", id));
         return mapToResponse(ledgerAccount);
     }
 
@@ -59,17 +63,17 @@ public class LedgerAccountServiceImpl implements LedgerAccountService {
         account.setLedgerAccountType(LedgerAccountType.valueOf(request.getLedgerAccountType()));
         account.setStatus(LedgerAccountStatus.ACTIVE);
         account.setCurrency(currencyRepository.findById(request.getCurrencyId())
-                .orElseThrow(() -> new RuntimeException("Currency not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Currency", request.getCurrencyId())));
         account.setBalance(request.getBalance() != null ? request.getBalance() : BigDecimal.ZERO);
         account.setDescription(request.getDescription());
 
         if (request.getAccountId() != null) {
             account.setAccount(accountRepository.findById(request.getAccountId())
-                    .orElseThrow(() -> new RuntimeException("Account not found")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Account", request.getAccountId())));
         }
         if (request.getPortfolioId() != null) {
             account.setPortfolio(portfolioRepository.findById(request.getPortfolioId())
-                    .orElseThrow(() -> new RuntimeException("Portfolio not found")));
+                    .orElseThrow(() -> new ResourceNotFoundException("Portfolio", request.getPortfolioId())));
         }
 
         LedgerAccount savedAccount = ledgerAccountRepository.save(account);
@@ -77,9 +81,10 @@ public class LedgerAccountServiceImpl implements LedgerAccountService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LedgerBalanceResponse getBalance(UUID ledgerAccountId) {
         LedgerAccount account = ledgerAccountRepository.findById(ledgerAccountId)
-                .orElseThrow(() -> new RuntimeException("Ledger Account not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("LedgerAccount", ledgerAccountId));
 
         List<JournalEntry> entries = journalEntryRepository.findByLedgerAccountId(ledgerAccountId);
         
