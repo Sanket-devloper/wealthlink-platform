@@ -9,6 +9,7 @@ import com.wealthlink.importdata.exception.ImportItemNotFoundException;
 import com.wealthlink.importdata.mapper.ImportItemMapper;
 import com.wealthlink.importdata.repository.ImportBatchRepository;
 import com.wealthlink.importdata.repository.ImportItemRepository;
+import com.wealthlink.importdata.service.ImportItemProcessorService;
 import com.wealthlink.importdata.service.ImportItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class ImportItemServiceImpl implements ImportItemService {
     private final ImportItemRepository importItemRepository;
     private final ImportBatchRepository importBatchRepository;
     private final ImportItemMapper importItemMapper;
+    private final ImportItemProcessorService importItemProcessorService;
 
     @Override
     public ImportItemResponse createImportItem(
@@ -97,6 +99,30 @@ public class ImportItemServiceImpl implements ImportItemService {
                 .stream()
                 .map(importItemMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public void retryImportItem(UUID id) {
+
+        ImportItem importItem = importItemRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new ImportItemNotFoundException(id));
+
+        if (importItem.getStatus() != ImportItemStatus.FAILED) {
+
+            throw new IllegalStateException(
+                    "Only FAILED import items can be retried"
+            );
+        }
+
+        importItem.setStatus(ImportItemStatus.PENDING);
+        importItem.setErrorDetails(null);
+        importItem.setProcessedAt(null);
+
+        importItemRepository.save(importItem);
+
+        importItemProcessorService.processItem(id);
     }
 
     @Override

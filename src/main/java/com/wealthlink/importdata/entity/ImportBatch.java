@@ -72,4 +72,16 @@ public class ImportBatch {
             this.status = ImportBatchStatus.PENDING;
         }
     }
+
+    public void incrementTotalItems() {
+        this.totalItems++;
+    }
+
+    public void incrementSuccessCount() {
+        this.successCount++;
+    }
+
+    public void incrementFailureCount() {
+        this.failureCount++;
+    }
 }

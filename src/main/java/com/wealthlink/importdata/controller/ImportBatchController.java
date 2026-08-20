@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/import-batches")
+@RequestMapping("/api/v1/import-batches")
 @RequiredArgsConstructor
 public class ImportBatchController {
 
@@ -67,4 +67,13 @@ public class ImportBatchController {
 
         return ResponseEntity.noContent().build();
     }
+    @PostMapping("/{id}/retry")
+    public ResponseEntity<Void> retryImportBatch(
+            @PathVariable("id") UUID id) {
+
+        importBatchService.retryImportBatch(id);
+
+        return ResponseEntity.accepted().build();
+    }
+
 }
