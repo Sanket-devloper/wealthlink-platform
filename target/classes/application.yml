@@ -15,7 +15,10 @@ spring:
         default_schema: public
     open-in-view: false
   flyway:
-    enabled: false # Disables Flyway so it will never try to recreate existing tables
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
 
 server:
   port: 8080
