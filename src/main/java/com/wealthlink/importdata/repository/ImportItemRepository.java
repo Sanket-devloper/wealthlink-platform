@@ -8,7 +8,13 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ImportItemRepository extends JpaRepository<ImportItem, UUID> {
-    List<ImportItem> findByImportBatchId(UUID importBatchId);
 
-    List<ImportItem> findByImportBatchIdAndStatus(UUID importBatchId, ImportItemStatus status);
+    List<ImportItem> findByImportBatchId(
+            UUID importBatchId
+    );
+
+    List<ImportItem> findByImportBatchIdAndStatus(
+            UUID importBatchId,
+            ImportItemStatus status
+    );
 }
