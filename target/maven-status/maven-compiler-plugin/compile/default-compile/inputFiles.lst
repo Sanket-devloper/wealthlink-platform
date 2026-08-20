@@ -14,6 +14,7 @@ D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\we
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\account\service\impl\AccountServiceImpl.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\common\dto\ErrorResponse.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\common\exception\GlobalExceptionHandler.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\common\exception\InvalidRoleSelectionException.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\common\exception\ResourceNotFoundException.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\customer\controller\CustomerController.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\customer\dto\CustomerContactRequest.java
@@ -123,6 +124,8 @@ D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\we
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\reference\service\impl\MarketServiceImpl.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\reference\service\MarketService.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\config\Dev1RolePermissions.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\config\JwtAccessDeniedHandler.java
+D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\config\JwtAuthenticationEntryPoint.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\config\SecurityConfig.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\jwt\JwtAuthenticationFilter.java
 D:\TechPulse\wealth-link-platform-dev1\wealth-link-platform\src\main\java\com\wealthlink\security\jwt\JwtService.java

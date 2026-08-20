@@ -4,6 +4,7 @@ com\wealthlink\importdata\entity\ImportJob.class
 com\wealthlink\marketdata\entity\FxRateSource$FxRateSourceBuilder.class
 com\wealthlink\reference\repository\CurrencyRepository.class
 com\wealthlink\marketdata\repository\FxRateSourceRepository.class
+com\wealthlink\common\exception\InvalidRoleSelectionException.class
 com\wealthlink\customer\repository\CustomerRepository.class
 com\wealthlink\identity\dto\LoginRequest.class
 com\wealthlink\identity\dto\AppUserRequest.class
@@ -79,6 +80,7 @@ com\wealthlink\reference\service\CountryService.class
 com\wealthlink\reference\service\impl\CurrencyServiceImpl.class
 com\wealthlink\account\repository\AccountRepository.class
 com\wealthlink\marketdata\entity\FxRateSource.class
+com\wealthlink\security\config\JwtAccessDeniedHandler.class
 com\wealthlink\customer\entity\CustomerContact.class
 com\wealthlink\reference\entity\Market$MarketBuilder.class
 com\wealthlink\identity\controller\RoleController.class
@@ -122,6 +124,7 @@ com\wealthlink\customer\entity\Customer$CustomerBuilder.class
 com\wealthlink\dividend\entity\DividendEvent.class
 com\wealthlink\fund\entity\FundProviderMapping$FundProviderMappingBuilder.class
 com\wealthlink\dividend\entity\DividendAllocation$DividendAllocationBuilder.class
+com\wealthlink\security\config\JwtAuthenticationEntryPoint.class
 com\wealthlink\account\entity\Account.class
 com\wealthlink\identity\entity\Role.class
 com\wealthlink\common\exception\GlobalExceptionHandler.class
