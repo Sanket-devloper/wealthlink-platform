@@ -7,9 +7,12 @@ import com.wealthlink.dividend.dto.response.DividendEventResponse;
 import com.wealthlink.dividend.entity.DividendAllocationStatus;
 import com.wealthlink.dividend.entity.DividendEventStatus;
 import com.wealthlink.dividend.service.DividendService;
+import com.wealthlink.security.jwt.JwtService;
+import com.wealthlink.security.user.CustomUserDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -27,10 +30,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(DividendController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class DividendControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -84,9 +94,8 @@ class DividendControllerTest {
     @Test
     @DisplayName("POST /api/v1/dividends/events returns 400 BAD REQUEST when validation fails")
     void declareDividend_ValidationFailure_Returns400() throws Exception {
-        // Missing required fields (e.g. fundShareClassId is null)
         DeclareDividendRequest invalidRequest = DeclareDividendRequest.builder()
-                .dividendPerUnit(new BigDecimal("-1.00")) // negative amount
+                .dividendPerUnit(new BigDecimal("-1.00"))
                 .build();
 
         mockMvc.perform(post("/api/v1/dividends/events")

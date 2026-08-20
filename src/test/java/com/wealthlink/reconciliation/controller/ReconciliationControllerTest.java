@@ -10,9 +10,12 @@ import com.wealthlink.reconciliation.dto.response.ReconciliationRunResponse;
 import com.wealthlink.reconciliation.entity.ReconciliationMatchStatus;
 import com.wealthlink.reconciliation.entity.ReconciliationRunStatus;
 import com.wealthlink.reconciliation.service.ReconciliationService;
+import com.wealthlink.security.jwt.JwtService;
+import com.wealthlink.security.user.CustomUserDetailsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -27,10 +30,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ReconciliationController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class ReconciliationControllerTest {
 
     @Autowired
@@ -41,6 +47,12 @@ class ReconciliationControllerTest {
 
     @MockBean
     private ReconciliationService reconciliationService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     @DisplayName("POST /api/v1/reconciliation/runs returns 201 CREATED")

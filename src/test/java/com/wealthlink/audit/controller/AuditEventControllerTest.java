@@ -4,9 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wealthlink.audit.dto.request.CreateAuditRecordRequest;
 import com.wealthlink.audit.dto.response.AuditEventResponse;
 import com.wealthlink.audit.service.AuditEventService;
+import com.wealthlink.security.jwt.JwtService;
+import com.wealthlink.security.user.CustomUserDetailsService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -18,10 +23,13 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuditEventController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AuditEventControllerTest {
 
     @Autowired
@@ -33,9 +41,16 @@ class AuditEventControllerTest {
     @MockBean
     private AuditEventService auditEventService;
 
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
+
     @Test
     @DisplayName("POST /api/v1/audits returns 201 CREATED")
     void recordAuditEvent_Returns201() throws Exception {
+
         UUID eventId = UUID.randomUUID();
         UUID entityId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
@@ -65,7 +80,8 @@ class AuditEventControllerTest {
                 .occurredAt(Instant.now())
                 .build();
 
-        when(auditEventService.recordEvent(any(CreateAuditRecordRequest.class))).thenReturn(response);
+        when(auditEventService.recordEvent(any(CreateAuditRecordRequest.class)))
+                .thenReturn(response);
 
         mockMvc.perform(post("/api/v1/audits")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -81,10 +97,11 @@ class AuditEventControllerTest {
     @Test
     @DisplayName("POST /api/v1/audits returns 400 BAD REQUEST when mandatory fields are missing")
     void recordAuditEvent_ValidationFailure_Returns400() throws Exception {
+
         CreateAuditRecordRequest invalidRequest = CreateAuditRecordRequest.builder()
-                .action("") // Fails @NotBlank
-                .entityType(null) // Fails @NotBlank
-                .entityId(null) // Fails @NotNull
+                .action("")
+                .entityType(null)
+                .entityId(null)
                 .build();
 
         mockMvc.perform(post("/api/v1/audits")
@@ -96,6 +113,7 @@ class AuditEventControllerTest {
     @Test
     @DisplayName("GET /api/v1/audits/entity/{entityType}/{entityId} returns 200 OK with audit list")
     void getEntityAuditTrail_Returns200() throws Exception {
+
         UUID entityId = UUID.randomUUID();
         UUID eventId = UUID.randomUUID();
 
@@ -108,9 +126,13 @@ class AuditEventControllerTest {
                 .occurredAt(Instant.now())
                 .build();
 
-        when(auditEventService.getAuditTrailForEntity("Position", entityId)).thenReturn(List.of(response));
+        when(auditEventService.getAuditTrailForEntity("Position", entityId))
+                .thenReturn(List.of(response));
 
-        mockMvc.perform(get("/api/v1/audits/entity/{entityType}/{entityId}", "Position", entityId))
+        mockMvc.perform(get(
+                        "/api/v1/audits/entity/{entityType}/{entityId}",
+                        "Position",
+                        entityId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(eventId.toString()))
                 .andExpect(jsonPath("$[0].entityType").value("Position"))
@@ -120,16 +142,21 @@ class AuditEventControllerTest {
     @Test
     @DisplayName("GET /api/v1/audits/correlation/{correlationId} returns 200 OK")
     void getByCorrelationId_Returns200() throws Exception {
+
         String correlationId = "CORR-TXN-12345";
+
         AuditEventResponse response = AuditEventResponse.builder()
                 .id(UUID.randomUUID())
                 .correlationId(correlationId)
                 .action("TRADE_MATCHED")
                 .build();
 
-        when(auditEventService.getAuditTrailByCorrelationId(correlationId)).thenReturn(List.of(response));
+        when(auditEventService.getAuditTrailByCorrelationId(correlationId))
+                .thenReturn(List.of(response));
 
-        mockMvc.perform(get("/api/v1/audits/correlation/{correlationId}", correlationId))
+        mockMvc.perform(get(
+                        "/api/v1/audits/correlation/{correlationId}",
+                        correlationId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].correlationId").value(correlationId))
                 .andExpect(jsonPath("$[0].action").value("TRADE_MATCHED"));
@@ -138,7 +165,9 @@ class AuditEventControllerTest {
     @Test
     @DisplayName("GET /api/v1/audits/user/{userId} returns 200 OK")
     void getByUser_Returns200() throws Exception {
+
         UUID userId = UUID.randomUUID();
+
         AuditEventResponse response = AuditEventResponse.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
@@ -146,9 +175,12 @@ class AuditEventControllerTest {
                 .action("REPORT_EXPORTED")
                 .build();
 
-        when(auditEventService.getAuditTrailByUser(userId)).thenReturn(List.of(response));
+        when(auditEventService.getAuditTrailByUser(userId))
+                .thenReturn(List.of(response));
 
-        mockMvc.perform(get("/api/v1/audits/user/{userId}", userId))
+        mockMvc.perform(get(
+                        "/api/v1/audits/user/{userId}",
+                        userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].userId").value(userId.toString()))
                 .andExpect(jsonPath("$[0].username").value("analyst_user"));
