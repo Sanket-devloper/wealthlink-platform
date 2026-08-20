@@ -123,6 +123,32 @@ public class SecurityConfig {
                                 Dev1RolePermissions.ADMIN,
                                 Dev1RolePermissions.TRADER)
 
+                        // Dev 3: Portfolio, Ledger & Trade
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/portfolios/**",
+                                "/api/v1/positions/**",
+                                "/api/v1/trade-orders/**",
+                                "/api/v1/trade-executions/**",
+                                "/api/v1/settlements/**",
+                                "/api/v1/journals/**",
+                                "/api/v1/ledger-accounts/**"
+                        ).hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/portfolios/**",
+                                "/api/v1/trade-orders/**",
+                                "/api/v1/trade-executions/**",
+                                "/api/v1/settlements/**",
+                                "/api/v1/journals/**",
+                                "/api/v1/ledger-accounts/**"
+                        ).hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
                         // IMPORTANT:
                         // Do not secure every /api/v1/** endpoint here.
                         // Dev2/Dev3/Dev4 will define their own authorization.
