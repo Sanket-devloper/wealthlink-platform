@@ -61,7 +61,9 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
 
+                        // =====================================================
                         // Authentication and API documentation
+                        // =====================================================
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/swagger-ui/**",
@@ -69,15 +71,22 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
 
-                        // Identity administration
+
+                        // =====================================================
+                        // Dev 1: Identity administration
+                        // =====================================================
                         .requestMatchers("/api/v1/users/**")
                         .hasRole(Dev1RolePermissions.ADMIN)
 
                         .requestMatchers("/api/v1/roles/**")
                         .hasRole(Dev1RolePermissions.ADMIN)
 
-                        // Reference data: everyone with a Dev1 role may read;
-                        // only ADMIN may create/update/delete.
+
+                        // =====================================================
+                        // Dev 1: Reference data
+                        // GET -> all operational roles
+                        // Write -> ADMIN only
+                        // =====================================================
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/countries/**",
                                 "/api/v1/currencies/**",
@@ -94,7 +103,12 @@ public class SecurityConfig {
                                 "/api/v1/markets/**")
                         .hasRole(Dev1RolePermissions.ADMIN)
 
-                        // Customer
+
+                        // =====================================================
+                        // Dev 1: Customer
+                        // GET -> all operational roles
+                        // Write -> ADMIN, TRADER, COMPLIANCE_OFFICER
+                        // =====================================================
                         .requestMatchers(HttpMethod.GET, "/api/v1/customers/**")
                         .hasAnyRole(
                                 Dev1RolePermissions.ADMIN,
@@ -109,7 +123,12 @@ public class SecurityConfig {
                                 Dev1RolePermissions.TRADER,
                                 Dev1RolePermissions.COMPLIANCE_OFFICER)
 
-                        // Account
+
+                        // =====================================================
+                        // Dev 1: Account
+                        // GET -> all operational roles
+                        // Write -> ADMIN, TRADER
+                        // =====================================================
                         .requestMatchers(HttpMethod.GET, "/api/v1/accounts/**")
                         .hasAnyRole(
                                 Dev1RolePermissions.ADMIN,
@@ -123,7 +142,12 @@ public class SecurityConfig {
                                 Dev1RolePermissions.ADMIN,
                                 Dev1RolePermissions.TRADER)
 
+
+                        // =====================================================
                         // Dev 3: Portfolio, Ledger & Trade
+                        // GET -> all operational roles
+                        // Write -> ADMIN, TRADER
+                        // =====================================================
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/portfolios/**",
                                 "/api/v1/positions/**",
@@ -149,9 +173,208 @@ public class SecurityConfig {
                                 Dev1RolePermissions.ADMIN,
                                 Dev1RolePermissions.TRADER)
 
-                        // IMPORTANT:
+
+                        // =====================================================
+                        // Dev 2: Funds & Market Data
+                        // =====================================================
+
+                        // -----------------------------------------------------
+                        // Funds
+                        // GET -> all operational roles
+                        // Write -> ADMIN, TRADER
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/funds/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/funds/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // Fund Share Classes
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/fund-share-classes/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/fund-share-classes/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // Providers
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/providers/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/providers/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // Fund Provider Mappings
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/fund-provider-mappings/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/fund-provider-mappings/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // FX Rate Sources
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/fx-rate-sources/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/fx-rate-sources/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // FX Rates
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/fx-rates/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/fx-rates/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // Fund Prices
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/fund-prices/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/fund-prices/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // Import Jobs
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/import-jobs/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/import-jobs/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // Import Batches
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/import-batches/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/import-batches/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // -----------------------------------------------------
+                        // Import Items
+                        // -----------------------------------------------------
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/import-items/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER,
+                                Dev1RolePermissions.RECONCILER,
+                                Dev1RolePermissions.COMPLIANCE_OFFICER)
+
+                        .requestMatchers(
+                                "/api/v1/import-items/**")
+                        .hasAnyRole(
+                                Dev1RolePermissions.ADMIN,
+                                Dev1RolePermissions.TRADER)
+
+
+                        // =====================================================
+                        // IMPORTANT
                         // Do not secure every /api/v1/** endpoint here.
-                        // Dev2/Dev3/Dev4 will define their own authorization.
+                        // Dev2/Dev3/Dev4 define their own authorization rules.
+                        // =====================================================
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(
