@@ -1,6 +1,7 @@
 package com.wealthlink.portfolio.service;
 
 import com.wealthlink.account.entity.Account;
+import com.wealthlink.common.exception.ResourceNotFoundException;
 import com.wealthlink.account.repository.AccountRepository;
 import com.wealthlink.portfolio.dto.CreatePortfolioRequest;
 import com.wealthlink.portfolio.dto.PortfolioResponse;
@@ -79,12 +80,12 @@ class PortfolioServiceImplTest {
     }
 
     @Test
-    void getById_throwsRuntimeException_whenPortfolioNotFound() {
+    void getById_throwsResourceNotFoundException_whenPortfolioNotFound() {
         UUID id = UUID.randomUUID();
         when(portfolioRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getById(id))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("not found");
     }
 
@@ -134,7 +135,7 @@ class PortfolioServiceImplTest {
         req.setBaseCurrencyId(UUID.randomUUID());
 
         assertThatThrownBy(() -> service.createPortfolio(req))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("not found");
     }
 

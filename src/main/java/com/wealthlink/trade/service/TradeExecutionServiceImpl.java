@@ -1,5 +1,7 @@
 package com.wealthlink.trade.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.reference.repository.CurrencyRepository;
 import com.wealthlink.trade.dto.ExecutionResponse;
 import com.wealthlink.trade.dto.RecordExecutionRequest;
@@ -35,14 +37,14 @@ public class TradeExecutionServiceImpl implements TradeExecutionService {
 
     public ExecutionResponse getById(UUID id) {
         TradeExecution execution = tradeExecutionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trade Execution not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TradeExecution", id));
         return mapToResponse(execution);
     }
 
     @Transactional
     public ExecutionResponse recordExecution(UUID orderId, RecordExecutionRequest request) {
         TradeOrder order = tradeOrderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Trade Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TradeOrder", orderId));
                 
         TradeExecution execution = new TradeExecution();
         execution.setTradeOrder(order);
@@ -56,7 +58,7 @@ public class TradeExecutionServiceImpl implements TradeExecutionService {
         execution.setTax(request.getTaxAmount() != null ? request.getTaxAmount() : BigDecimal.ZERO);
         execution.setNetAmount(request.getNetAmount());
         execution.setCurrency(currencyRepository.findById(request.getCurrencyId())
-                .orElseThrow(() -> new RuntimeException("Currency not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Currency", request.getCurrencyId())));
         execution.setExternalReference(request.getExternalReference());
         execution.setExecutedAt(Instant.now());
         

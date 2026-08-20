@@ -1,5 +1,7 @@
 package com.wealthlink.trade.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
+
 import com.wealthlink.fund.repository.FundShareClassRepository;
 import com.wealthlink.portfolio.repository.PortfolioRepository;
 import com.wealthlink.reference.repository.CurrencyRepository;
@@ -40,7 +42,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
     @Transactional(readOnly = true)
     public OrderResponse getById(UUID id) {
         TradeOrder order = tradeOrderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TradeOrder", id));
         return mapToResponse(order);
     }
 
@@ -55,11 +57,11 @@ public class TradeOrderServiceImpl implements TradeOrderService {
 
         TradeOrder order = new TradeOrder();
         order.setPortfolio(portfolioRepository.findById(request.getPortfolioId())
-                .orElseThrow(() -> new RuntimeException("Portfolio not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio", request.getPortfolioId())));
         order.setFundShareClass(fundShareClassRepository.findById(request.getFundShareClassId())
-                .orElseThrow(() -> new RuntimeException("FundShareClass not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("FundShareClass", request.getFundShareClassId())));
         order.setCurrency(currencyRepository.findById(request.getCurrencyId())
-                .orElseThrow(() -> new RuntimeException("Currency not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Currency", request.getCurrencyId())));
         
         order.setOrderType(TradeOrderType.valueOf(request.getOrderType()));
         order.setRequestedQuantity(request.getQuantity());
@@ -76,7 +78,7 @@ public class TradeOrderServiceImpl implements TradeOrderService {
     @Transactional
     public CancelOrderResponse cancelOrder(UUID id, CancelOrderRequest request) {
         TradeOrder order = tradeOrderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("TradeOrder", id));
         
         if (order.getStatus() != TradeOrderStatus.PENDING) {
             throw new IllegalStateException("Only PENDING orders can be cancelled.");
@@ -89,6 +91,14 @@ public class TradeOrderServiceImpl implements TradeOrderService {
                 .orderId(saved.getId())
                 .status(saved.getStatus().name())
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getOrdersForPortfolio(UUID portfolioId) {
+        return tradeOrderRepository.findByPortfolioId(portfolioId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private OrderResponse mapToResponse(TradeOrder order) {

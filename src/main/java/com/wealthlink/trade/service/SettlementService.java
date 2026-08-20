@@ -11,4 +11,6 @@ public interface SettlementService {
     SettlementResponse createSettlement(UUID executionId, CreateSettlementRequest request);
 
     RetrySettlementResponse retrySettlement(UUID settlementId);
+
+    SettlementResponse getSettlementById(UUID settlementId);
 }

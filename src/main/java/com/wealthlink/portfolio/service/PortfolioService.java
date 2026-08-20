@@ -16,4 +16,8 @@ public interface PortfolioService {
     PortfolioResponse createPortfolio(CreatePortfolioRequest request);
 
     ValuationResponse getValuation(UUID portfolioId, LocalDate valuationDate);
+
+    PortfolioResponse updatePortfolio(UUID id, com.wealthlink.portfolio.dto.UpdatePortfolioRequest request);
+
+    List<PortfolioResponse> getPortfoliosByAccountId(UUID accountId);
 }

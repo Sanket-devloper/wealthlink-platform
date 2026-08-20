@@ -1,5 +1,6 @@
 package com.wealthlink.ledger.service;
 
+import com.wealthlink.common.exception.ResourceNotFoundException;
 import com.wealthlink.ledger.dto.CreateJournalEntryRequest;
 import com.wealthlink.ledger.dto.CreateJournalRequest;
 import com.wealthlink.ledger.dto.JournalResponse;
@@ -115,12 +116,12 @@ class JournalServiceImplTest {
     }
 
     @Test
-    void getById_throwsRuntimeException_whenJournalNotFound() {
+    void getById_throwsResourceNotFoundException_whenJournalNotFound() {
         UUID id = UUID.randomUUID();
         when(journalRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getById(id))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("not found");
     }
 

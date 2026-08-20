@@ -13,4 +13,6 @@ public interface PositionRepository extends JpaRepository<Position, UUID> {
 
     // Added: Fetch all investor positions for a specific fund share class as of recordDate
     List<Position> findByFundShareClassIdAndPositionDate(UUID fundShareClassId, LocalDate positionDate);
+    
+    List<Position> findByPortfolioId(UUID portfolioId);
 }

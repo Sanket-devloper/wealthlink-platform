@@ -16,4 +16,8 @@ public interface JournalEntryService {
 
     /** Retrieve a single journal entry by its primary key. */
     JournalResponse.JournalEntryResponse getById(UUID id);
+
+    List<JournalResponse.JournalEntryResponse> getEntriesByLedgerAccountId(UUID ledgerAccountId);
+
+    List<JournalResponse.JournalEntryResponse> getEntriesByJournalId(UUID journalId);
 }
