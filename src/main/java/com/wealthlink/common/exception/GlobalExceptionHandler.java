@@ -17,6 +17,7 @@ import com.wealthlink.marketdata.exception.FxRateAlreadyExistsException;
 import com.wealthlink.marketdata.exception.FxRateNotFoundException;
 import com.wealthlink.marketdata.exception.FxRateSourceAlreadyExistsException;
 import com.wealthlink.marketdata.exception.FxRateSourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,8 @@ import java.util.Map;
  * Central error handling for the REST API layer, so every controller
  * returns a consistent JSON error shape instead of raw stack traces.
  */
+
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -291,6 +294,25 @@ public class GlobalExceptionHandler {
                 .body(body);
     }
 
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(EntityNotFoundException ex) {
+
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                "Not Found",
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentsAndStates(
+            RuntimeException ex) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                ex.getMessage()
+        );
+    }
 
     // =========================================================
     // SECURITY EXCEPTIONS
@@ -337,5 +359,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(status)
                 .body(body);
+    }
+
+    //handle the server error
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(
+            Exception ex) {
+
+        return buildResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Internal Server Error",
+                ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred"
+        );
     }
 }

@@ -1,0 +1,77 @@
+name: WealthLink Build & Quality Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  # ==========================================
+  # STAGE 1: Build, Test & SonarQube Analysis
+  # ==========================================
+  build-and-verify:
+    name: Maven Verify & SonarQube Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history needed for SonarQube code scanning
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+#      - name: Cache SonarQube packages
+#        uses: actions/cache@v4
+#        with:
+#          path: ~/.sonar/cache
+#          key: ${{ runner.os }}-sonar
+#          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Build, Test & Generate JaCoCo Coverage
+        run: mvn clean verify
+
+#      - name: Execute SonarQube Quality Scan
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+#        run: |
+#          mvn sonar:sonar \
+#            -Dsonar.projectKey=wealth-link-platform \
+#            -Dsonar.projectName='WealthLink Platform' \
+#            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+#            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+  # ==========================================
+  # STAGE 2: Container Image Build (Merged Branches)
+  # ==========================================
+  docker-package:
+    name: Build & Verify Docker Image
+    needs: build-and-verify
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Application Container
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: wealthlink/backend:${{ github.sha }}
