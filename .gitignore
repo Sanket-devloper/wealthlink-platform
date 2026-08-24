@@ -25,12 +25,33 @@ replay_pid*
 
 # Maven
 target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# JaCoCo & SonarQube Local Cache
+.sonar/
+.scannerwork/
+jacoco.exec
 
 # IntelliJ IDEA
 .idea/
 *.iml
 *.iws
 *.ipr
+out/
 
-# macOS
-.DS_Store
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradler/
+/build/

@@ -25,6 +25,26 @@
 
     <properties>
         <java.version>17</java.version>
+
+        <!-- SonarQube & JaCoCo Configuration -->
+        <sonar.organization>wealthlink</sonar.organization>
+        <sonar.projectKey>wealth-link-platform</sonar.projectKey>
+        <sonar.projectName>WealthLink Platform</sonar.projectName>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <!-- JaCoCo coverage report path for SonarQube -->
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.build.directory}/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+
+        <!-- Exclude boilerplate / generated classes from code coverage metrics -->
+        <sonar.coverage.exclusions>
+            **/dto/**,
+            **/entity/**,
+            **/config/**,
+            **/constant/**,
+            **/*Application.java
+        </sonar.coverage.exclusions>
+
     </properties>
 
     <dependencies>
@@ -181,6 +201,34 @@
                 </configuration>
 
             </plugin>
+
+            <!-- JaCoCo Plugin for Code Coverage Generation -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- SonarQube Scanner Plugin -->
+<!--            <plugin>-->
+<!--                <groupId>org.sonarsource.scanner.maven</groupId>-->
+<!--                <artifactId>sonar-maven-plugin</artifactId>-->
+<!--                <version>4.0.0.4121</version>-->
+<!--            </plugin>-->
 
         </plugins>
 
