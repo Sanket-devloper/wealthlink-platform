@@ -26,12 +26,13 @@
     <properties>
         <java.version>17</java.version>
 
-        <!-- SonarQube & JaCoCo Configuration -->
-        <sonar.organization>wealthlink</sonar.organization>
-        <sonar.projectKey>wealth-link-platform</sonar.projectKey>
+        <!-- SonarCloud & JaCoCo Configuration -->
+        <sonar.organization>sanket-devloper</sonar.organization>
+        <sonar.projectKey>Sanket-devloper_wealth-link-platform</sonar.projectKey>
         <sonar.projectName>WealthLink Platform</sonar.projectName>
-        <sonar.host.url>http://localhost:9000</sonar.host.url>
-        <!-- JaCoCo coverage report path for SonarQube -->
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+        <!-- JaCoCo coverage report path for SonarCloud -->
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.build.directory}/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
@@ -183,6 +184,7 @@
 
         <plugins>
 
+            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -202,17 +204,21 @@
 
             </plugin>
 
+
             <!-- JaCoCo Plugin for Code Coverage Generation -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+
                 <executions>
+
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+
                     <execution>
                         <id>report</id>
                         <phase>verify</phase>
@@ -220,15 +226,18 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
+
                 </executions>
+
             </plugin>
 
-            <!-- SonarQube Scanner Plugin -->
-<!--            <plugin>-->
-<!--                <groupId>org.sonarsource.scanner.maven</groupId>-->
-<!--                <artifactId>sonar-maven-plugin</artifactId>-->
-<!--                <version>4.0.0.4121</version>-->
-<!--            </plugin>-->
+
+            <!-- SonarCloud Maven Plugin -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>5.2.0.4988</version>
+            </plugin>
 
         </plugins>
 
