@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/dev2-funds-market-data
+
   pull_request:
     branches:
       - feature/dev2-funds-market-data
@@ -14,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -26,6 +28,6 @@ jobs:
 
       - name: Build and Analyze
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.WEALTHLINK_SONAR_TOKEN }}
         run: |
           mvn clean verify sonar:sonar -Dsonar.token=${SONAR_TOKEN}
